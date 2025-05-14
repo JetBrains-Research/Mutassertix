@@ -1,0 +1,21 @@
+{
+  "projects": [
+    {
+      "sourceDir": "/Users/arkadii.sapozhnikov/Desktop/nbvcxz",
+      "projectDependencies": [
+        "target/classes",
+        "target/test-classes"
+      ],
+      "targets": [
+        {
+          "class": "me.gosimple.nbvcxz.Nbvcxz",
+          "test": "me.gosimple.nbvcxz.NbvcxzTest"
+        },
+        {
+          "class": "me.gosimple.nbvcxz.matching.match.DateMatch",
+          "test": "me.gosimple.nbvcxz.matching.DateMatcherTest"
+        }
+      ]
+    }
+  ]
+}

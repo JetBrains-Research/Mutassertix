@@ -1,5 +1,7 @@
 package pitest
 
+import data.ProjectConfiguration
+
 /**
  * Generator class for creating PITest mutation testing command line arguments.
  */
@@ -8,24 +10,17 @@ class PitestCommandLineGenerator {
     /**
      * Generates the complete command line string to run PITest mutation testing.
      *
-     * @param sourceDir Root directory containing source files
-     * @param projectDependencies List of project-specific dependencies to be included in classpath
-     * @param targetClasses Pattern specifying which classes to mutate (e.g. "com.example.*")
-     * @param targetTests Pattern specifying which tests to run (e.g. "com.example.*Test")
+     * @param projectConfiguration Configuration settings for the project to be tested
+     *
      * @return Complete command line string for executing PITest
      */
-    fun getCommand(
-        sourceDir: String,
-        projectDependencies: List<String>,
-        targetClasses: String,
-        targetTests: String,
-    ): String {
-        return "java -cp ${getCPLine(sourceDir, projectDependencies)}" +
+    fun getCommand(projectConfiguration: ProjectConfiguration): String {
+        return "java -cp ${getCPLine(projectConfiguration.sourceDir, projectConfiguration.projectDependencies)}" +
                 " org.pitest.mutationtest.commandline.MutationCoverageReport" +
-                " --reportDir ${sourceDir}/pitest" +
-                " --targetClasses $targetClasses" +
-                " --targetTests $targetTests" +
-                " --sourceDirs $sourceDir" +
+                " --reportDir ${projectConfiguration.sourceDir}/pitest" +
+                " --targetClasses ${projectConfiguration.targetClass}" +
+                " --targetTests ${projectConfiguration.targetTest}" +
+                " --sourceDirs ${projectConfiguration.sourceDir}" +
                 " --verbosity VERBOSE"
     }
 

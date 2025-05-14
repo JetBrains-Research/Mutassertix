@@ -1,34 +1,39 @@
 package pitest
 
+import data.ProjectConfiguration
+import java.io.File
+
+/**
+ * Represents a pipeline for running PITest mutation testing.
+ */
 class PitestPipeline {
 
     /**
      * Runs the Pitest pipeline
      *
-     * @param sourceDir Root directory containing source files
-     * @param projectDependencies List of project-specific dependencies to be included in classpath
-     * @param targetClasses Pattern specifying which classes to mutate (e.g. "com.example.*")
-     * @param targetTests Pattern specifying which tests to run (e.g. "com.example.*Test")
+     * @param projectConfiguration Configuration settings for the project to be tested
+     *
      * @return Complete command line string for executing PITest
      */
-    fun getMutationScore(
-        sourceDir: String,
-        projectDependencies: List<String>,
-        targetClasses: String,
-        targetTests: String
-    ): Int {
-        val pitestCommandLine =
-            PitestCommandLineGenerator().getCommand(sourceDir, projectDependencies, targetClasses, targetTests)
+    fun getMutationScore(projectConfiguration: ProjectConfiguration): Int {
+        // Generate the PITest command line
+        val pitestCommandLine = PitestCommandLineGenerator().getCommand(projectConfiguration)
 
+        // Start a new process to execute the PITest command
         val process = ProcessBuilder()
             .command("sh", "-c", pitestCommandLine)
             .start()
 
-        // Read output
+        // Store the complete output from the PITest execution
         val output = process.inputStream.bufferedReader().use { it.readText() }
 
+        // Wait for the PITest process to complete
         process.waitFor()
 
+        // Remove report folder
+        File(projectConfiguration.sourceDir + "/pitest").deleteRecursively()
+
+        // Parse the PITest output and extract the mutation score
         return PitestReportParser().getMutationScore(output)
     }
 }
