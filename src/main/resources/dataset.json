@@ -1,7 +1,8 @@
 {
   "projects": [
     {
-      "sourceDir": "/Users/arkadii.sapozhnikov/Desktop/nbvcxz",
+      "github": "https://github.com/GoSimpleLLC/nbvcxz.git",
+      "sourceDir": "../nbvcxz",
       "projectDependencies": [
         "target/classes",
         "target/test-classes"
@@ -14,6 +15,40 @@
         {
           "class": "me.gosimple.nbvcxz.matching.match.DateMatch",
           "test": "me.gosimple.nbvcxz.matching.DateMatcherTest"
+        },
+        {
+          "class": "me.gosimple.nbvcxz.matching.match.DateMatcher",
+          "test": "me.gosimple.nbvcxz.matching.DateMatcherTest"
+        },
+        {
+          "class": "me.gosimple.nbvcxz.resources.DictionaryUtil",
+          "test": "me.gosimple.nbvcxz.resources.DictionaryUtilTest"
+        }
+      ]
+    },
+    {
+      "github": "https://github.com/c-rack/cbor-java",
+      "sourceDir": "../cbor-java",
+      "projectDependencies": [
+        "target/classes",
+        "target/test-classes"
+      ],
+      "targets": [
+        {
+          "class": "co.nstant.in.cbor.CborBuilder",
+          "test": "co.nstant.in.cbor.CborBuilderTest"
+        },
+        {
+          "class": "co.nstant.in.cbor.CborBuilder",
+          "test": "co.nstant.in.cbor.builder.MapBuilderTest"
+        },
+        {
+          "class": "co.nstant.in.cbor.CborDecoder",
+          "test": "co.nstant.in.cbor.decoder.CborDecoderTest"
+        },
+        {
+          "class": "co.nstant.in.cbor.CborEncoder",
+          "test": "co.nstant.in.cbor.encoder.MapEncoderTest"
         }
       ]
     }

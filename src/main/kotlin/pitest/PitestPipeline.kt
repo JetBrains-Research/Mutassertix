@@ -34,6 +34,10 @@ class PitestPipeline {
         File(projectConfiguration.sourceDir + "/pitest").deleteRecursively()
 
         // Parse the PITest output and extract the mutation score
-        return PitestReportParser().getMutationScore(output)
+        val mutationScore = PitestReportParser().getMutationScore(output)
+
+        println("> Collecting mutation score $mutationScore")
+
+        return mutationScore
     }
 }
