@@ -1,100 +1,98 @@
-{
-  "projects": [
-    {
-      "github": "https://github.com/GoSimpleLLC/nbvcxz.git",
-      "sourceDir": "../nbvcxz",
-      "buildTool": "maven",
-      "targets": [
-        {
-          "class": "me.gosimple.nbvcxz.Nbvcxz",
-          "test": "me.gosimple.nbvcxz.NbvcxzTest"
-        },
-        {
-          "class": "me.gosimple.nbvcxz.matching.match.DateMatch",
-          "test": "me.gosimple.nbvcxz.matching.DateMatcherTest"
-        },
-        {
-          "class": "me.gosimple.nbvcxz.matching.match.DateMatcher",
-          "test": "me.gosimple.nbvcxz.matching.DateMatcherTest"
-        },
-        {
-          "class": "me.gosimple.nbvcxz.resources.DictionaryUtil",
-          "test": "me.gosimple.nbvcxz.resources.DictionaryUtilTest"
-        }
-      ]
-    },
-    {
-      "github": "https://github.com/c-rack/cbor-java",
-      "sourceDir": "../cbor-java",
-      "buildTool": "maven",
-      "targets": [
-        {
-          "class": "co.nstant.in.cbor.CborBuilder",
-          "test": "co.nstant.in.cbor.CborBuilderTest"
-        },
-        {
-          "class": "co.nstant.in.cbor.CborBuilder",
-          "test": "co.nstant.in.cbor.builder.MapBuilderTest"
-        },
-        {
-          "class": "co.nstant.in.cbor.CborDecoder",
-          "test": "co.nstant.in.cbor.decoder.CborDecoderTest"
-        },
-        {
-          "class": "co.nstant.in.cbor.CborEncoder",
-          "test": "co.nstant.in.cbor.encoder.MapEncoderTest"
-        }
-      ]
-    },
-    {
-      "github": "https://github.com/wmixvideo/nfe",
-      "sourceDir": "../nfe",
-      "buildTool": "maven",
-      "targets": [
-        {
-          "class": "com.fincatto.documentofiscal.DFAmbiente",
-          "test": "com.fincatto.documentofiscal.DFAmbienteTest"
-        },
-        {
-          "class": "com.fincatto.documentofiscal.utils.DFUtils",
-          "test": "com.fincatto.documentofiscal.utils.DFUtilsTest"
-        },
-        {
-          "class": "com.fincatto.documentofiscal.validadores.DFIntegerValidador",
-          "test": "com.fincatto.documentofiscal.validadores.DFIntegerValidadorTest"
-        },
-        {
-          "class": "com.fincatto.documentofiscal.DFModelo",
-          "test": "com.fincatto.documentofiscal.DFModeloTest"
-        }
-      ]
-    },
-    {
-      "github": "https://github.com/lightsail-network/java-stellar-sdk",
-      "sourceDir": "../java-stellar-sdk",
-      "buildTool": "gradle",
-      "libraryDependencies": [
-        "https://repo1.maven.org/maven2/commons-codec/commons-codec/1.18.0/commons-codec-1.18.0.jar",
-        "https://repo1.maven.org/maven2/org/bouncycastle/bcprov-jdk18on/1.79/bcprov-jdk18on-1.79.jar"
-      ],
-      "targets": [
-        {
-          "class": "org.stellar.sdk.Address",
-          "test": "org.stellar.sdk.AddressTest"
-        },
-        {
-          "class": "org.stellar.sdk.Asset",
-          "test": "org.stellar.sdk.AssetTest"
-        },
-        {
-          "class": "org.stellar.sdk.KeyPair",
-          "test": "org.stellar.sdk.KeyPairTest"
-        },
-        {
-          "class": "org.stellar.sdk.Price",
-          "test": "org.stellar.sdk.PriceTest"
-        }
-      ]
-    }
-  ]
-}
+[
+  {
+    "github": "https://github.com/GoSimpleLLC/nbvcxz.git",
+    "sourceDir": "../nbvcxz",
+    "buildTool": "maven",
+    "targets": [
+      {
+        "class": "me.gosimple.nbvcxz.Nbvcxz",
+        "test": "me.gosimple.nbvcxz.NbvcxzTest"
+      },
+      {
+        "class": "me.gosimple.nbvcxz.matching.match.DateMatch",
+        "test": "me.gosimple.nbvcxz.matching.DateMatcherTest"
+      },
+      {
+        "class": "me.gosimple.nbvcxz.matching.match.DateMatcher",
+        "test": "me.gosimple.nbvcxz.matching.DateMatcherTest"
+      },
+      {
+        "class": "me.gosimple.nbvcxz.resources.DictionaryUtil",
+        "test": "me.gosimple.nbvcxz.resources.DictionaryUtilTest"
+      }
+    ]
+  },
+  {
+    "github": "https://github.com/c-rack/cbor-java",
+    "sourceDir": "../cbor-java",
+    "buildTool": "maven",
+    "targets": [
+      {
+        "class": "co.nstant.in.cbor.CborBuilder",
+        "test": "co.nstant.in.cbor.CborBuilderTest"
+      },
+      {
+        "class": "co.nstant.in.cbor.CborBuilder",
+        "test": "co.nstant.in.cbor.builder.MapBuilderTest"
+      },
+      {
+        "class": "co.nstant.in.cbor.CborDecoder",
+        "test": "co.nstant.in.cbor.decoder.CborDecoderTest"
+      },
+      {
+        "class": "co.nstant.in.cbor.CborEncoder",
+        "test": "co.nstant.in.cbor.encoder.MapEncoderTest"
+      }
+    ]
+  },
+  {
+    "github": "https://github.com/wmixvideo/nfe",
+    "sourceDir": "../nfe",
+    "buildTool": "maven",
+    "targets": [
+      {
+        "class": "com.fincatto.documentofiscal.DFAmbiente",
+        "test": "com.fincatto.documentofiscal.DFAmbienteTest"
+      },
+      {
+        "class": "com.fincatto.documentofiscal.utils.DFUtils",
+        "test": "com.fincatto.documentofiscal.utils.DFUtilsTest"
+      },
+      {
+        "class": "com.fincatto.documentofiscal.validadores.DFIntegerValidador",
+        "test": "com.fincatto.documentofiscal.validadores.DFIntegerValidadorTest"
+      },
+      {
+        "class": "com.fincatto.documentofiscal.DFModelo",
+        "test": "com.fincatto.documentofiscal.DFModeloTest"
+      }
+    ]
+  },
+  {
+    "github": "https://github.com/lightsail-network/java-stellar-sdk",
+    "sourceDir": "../java-stellar-sdk",
+    "buildTool": "gradle",
+    "libraryDependencies": [
+      "https://repo1.maven.org/maven2/commons-codec/commons-codec/1.18.0/commons-codec-1.18.0.jar",
+      "https://repo1.maven.org/maven2/org/bouncycastle/bcprov-jdk18on/1.79/bcprov-jdk18on-1.79.jar"
+    ],
+    "targets": [
+      {
+        "class": "org.stellar.sdk.Address",
+        "test": "org.stellar.sdk.AddressTest"
+      },
+      {
+        "class": "org.stellar.sdk.Asset",
+        "test": "org.stellar.sdk.AssetTest"
+      },
+      {
+        "class": "org.stellar.sdk.KeyPair",
+        "test": "org.stellar.sdk.KeyPairTest"
+      },
+      {
+        "class": "org.stellar.sdk.Price",
+        "test": "org.stellar.sdk.PriceTest"
+      }
+    ]
+  }
+]

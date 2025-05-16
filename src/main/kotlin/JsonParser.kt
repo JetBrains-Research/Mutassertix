@@ -20,7 +20,7 @@ class JsonParser {
         val json = Json { ignoreUnknownKeys = true }
         val jsonElement = json.parseToJsonElement(File(filepath).readText())
 
-        return jsonElement.jsonObject["projects"]?.jsonArray?.flatMap { projectJson ->
+        return jsonElement.jsonArray.flatMap { projectJson ->
             val sourceDir = projectJson.jsonObject["sourceDir"]?.jsonPrimitive?.content ?: ""
             val buildTool = projectJson.jsonObject["buildTool"]?.jsonPrimitive?.content ?: ""
             val projectDependencies = when (buildTool) {
