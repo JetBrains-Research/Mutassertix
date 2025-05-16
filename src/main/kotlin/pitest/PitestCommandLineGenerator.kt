@@ -27,8 +27,8 @@ class PitestCommandLineGenerator {
         }" +
                 " org.pitest.mutationtest.commandline.MutationCoverageReport" +
                 " --reportDir ${projectConfiguration.sourceDir}/pitest" +
-                " --targetClasses ${projectConfiguration.targetClass}" +
-                " --targetTests ${projectConfiguration.targetTest}" +
+                " --targetClasses ${projectConfiguration.targetClasses.joinToString(",")}" +
+                " --targetTests ${projectConfiguration.targetTests.joinToString(",")}" +
                 " --sourceDirs ${projectConfiguration.sourceDir}" +
                 " --verbosity VERBOSE"
     }

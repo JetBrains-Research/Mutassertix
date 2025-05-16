@@ -20,7 +20,7 @@ class JsonParser {
         val json = Json { ignoreUnknownKeys = true }
         val jsonElement = json.parseToJsonElement(File(filepath).readText())
 
-        return jsonElement.jsonArray.flatMap { projectJson ->
+        return jsonElement.jsonArray.map { projectJson ->
             val sourceDir = projectJson.jsonObject["sourceDir"]?.jsonPrimitive?.content ?: ""
             val buildTool = projectJson.jsonObject["buildTool"]?.jsonPrimitive?.content ?: ""
             val projectDependencies = when (buildTool) {
@@ -43,17 +43,19 @@ class JsonParser {
                 }
             }
 
-            projectJson.jsonObject["targets"]?.jsonArray?.map { target ->
-                ProjectConfiguration(
-                    sourceDir = sourceDir,
-                    projectDependencies = projectDependencies,
-                    libraryDependencies = projectJson.jsonObject["libraryDependencies"]?.jsonArray?.map {
-                        it.jsonPrimitive.content
-                    } ?: emptyList(),
-                    targetClass = target.jsonObject["class"]?.jsonPrimitive?.content ?: "",
-                    targetTest = target.jsonObject["test"]?.jsonPrimitive?.content ?: ""
-                )
-            } ?: emptyList()
-        } ?: emptyList()
+            ProjectConfiguration(
+                sourceDir = sourceDir,
+                projectDependencies = projectDependencies,
+                libraryDependencies = projectJson.jsonObject["libraryDependencies"]?.jsonArray?.map {
+                    it.jsonPrimitive.content
+                } ?: emptyList(),
+                targetClasses = projectJson.jsonObject["targetClasses"]?.jsonArray?.map {
+                    it.jsonPrimitive.content
+                } ?: emptyList(),
+                targetTests = projectJson.jsonObject["targetTests"]?.jsonArray?.map {
+                    it.jsonPrimitive.content
+                } ?: emptyList()
+            )
+        }
     }
 }

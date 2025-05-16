@@ -3,69 +3,49 @@
     "github": "https://github.com/GoSimpleLLC/nbvcxz.git",
     "sourceDir": "../nbvcxz",
     "buildTool": "maven",
-    "targets": [
-      {
-        "class": "me.gosimple.nbvcxz.Nbvcxz",
-        "test": "me.gosimple.nbvcxz.NbvcxzTest"
-      },
-      {
-        "class": "me.gosimple.nbvcxz.matching.match.DateMatch",
-        "test": "me.gosimple.nbvcxz.matching.DateMatcherTest"
-      },
-      {
-        "class": "me.gosimple.nbvcxz.matching.match.DateMatcher",
-        "test": "me.gosimple.nbvcxz.matching.DateMatcherTest"
-      },
-      {
-        "class": "me.gosimple.nbvcxz.resources.DictionaryUtil",
-        "test": "me.gosimple.nbvcxz.resources.DictionaryUtilTest"
-      }
+    "targetClasses": [
+      "me.gosimple.nbvcxz.Nbvcxz",
+      "me.gosimple.nbvcxz.matching.match.DateMatch",
+      "me.gosimple.nbvcxz.matching.match.DateMatcher",
+      "me.gosimple.nbvcxz.resources.DictionaryUtil"
+    ],
+    "targetTests": [
+      "me.gosimple.nbvcxz.NbvcxzTest",
+      "me.gosimple.nbvcxz.matching.DateMatcherTest",
+      "me.gosimple.nbvcxz.resources.DictionaryUtilTest"
     ]
   },
   {
     "github": "https://github.com/c-rack/cbor-java",
     "sourceDir": "../cbor-java",
     "buildTool": "maven",
-    "targets": [
-      {
-        "class": "co.nstant.in.cbor.CborBuilder",
-        "test": "co.nstant.in.cbor.CborBuilderTest"
-      },
-      {
-        "class": "co.nstant.in.cbor.CborBuilder",
-        "test": "co.nstant.in.cbor.builder.MapBuilderTest"
-      },
-      {
-        "class": "co.nstant.in.cbor.CborDecoder",
-        "test": "co.nstant.in.cbor.decoder.CborDecoderTest"
-      },
-      {
-        "class": "co.nstant.in.cbor.CborEncoder",
-        "test": "co.nstant.in.cbor.encoder.MapEncoderTest"
-      }
+    "targetClasses": [
+      "co.nstant.in.cbor.CborBuilder",
+      "co.nstant.in.cbor.CborDecoder",
+      "co.nstant.in.cbor.CborEncoder"
+    ],
+    "targetTests": [
+      "co.nstant.in.cbor.CborBuilderTest",
+      "co.nstant.in.cbor.builder.MapBuilderTest",
+      "co.nstant.in.cbor.decoder.CborDecoderTest",
+      "co.nstant.in.cbor.encoder.MapEncoderTest"
     ]
   },
   {
     "github": "https://github.com/wmixvideo/nfe",
     "sourceDir": "../nfe",
     "buildTool": "maven",
-    "targets": [
-      {
-        "class": "com.fincatto.documentofiscal.DFAmbiente",
-        "test": "com.fincatto.documentofiscal.DFAmbienteTest"
-      },
-      {
-        "class": "com.fincatto.documentofiscal.utils.DFUtils",
-        "test": "com.fincatto.documentofiscal.utils.DFUtilsTest"
-      },
-      {
-        "class": "com.fincatto.documentofiscal.validadores.DFIntegerValidador",
-        "test": "com.fincatto.documentofiscal.validadores.DFIntegerValidadorTest"
-      },
-      {
-        "class": "com.fincatto.documentofiscal.DFModelo",
-        "test": "com.fincatto.documentofiscal.DFModeloTest"
-      }
+    "targetClasses": [
+      "com.fincatto.documentofiscal.DFAmbiente",
+      "com.fincatto.documentofiscal.utils.DFUtils",
+      "com.fincatto.documentofiscal.validadores.DFIntegerValidador",
+      "com.fincatto.documentofiscal.DFModelo"
+    ],
+    "targetTests": [
+      "com.fincatto.documentofiscal.DFAmbienteTest",
+      "com.fincatto.documentofiscal.utils.DFUtilsTest",
+      "com.fincatto.documentofiscal.validadores.DFIntegerValidadorTest",
+      "com.fincatto.documentofiscal.DFModeloTest"
     ]
   },
   {
@@ -76,23 +56,17 @@
       "https://repo1.maven.org/maven2/commons-codec/commons-codec/1.18.0/commons-codec-1.18.0.jar",
       "https://repo1.maven.org/maven2/org/bouncycastle/bcprov-jdk18on/1.79/bcprov-jdk18on-1.79.jar"
     ],
-    "targets": [
-      {
-        "class": "org.stellar.sdk.Address",
-        "test": "org.stellar.sdk.AddressTest"
-      },
-      {
-        "class": "org.stellar.sdk.Asset",
-        "test": "org.stellar.sdk.AssetTest"
-      },
-      {
-        "class": "org.stellar.sdk.KeyPair",
-        "test": "org.stellar.sdk.KeyPairTest"
-      },
-      {
-        "class": "org.stellar.sdk.Price",
-        "test": "org.stellar.sdk.PriceTest"
-      }
+    "targetClasses": [
+      "org.stellar.sdk.Address",
+      "org.stellar.sdk.Asset",
+      "org.stellar.sdk.KeyPair",
+      "org.stellar.sdk.Price"
+    ],
+    "targetTests": [
+      "org.stellar.sdk.AddressTest",
+      "org.stellar.sdk.AssetTest",
+      "org.stellar.sdk.KeyPairTest",
+      "org.stellar.sdk.PriceTest"
     ]
   }
 ]

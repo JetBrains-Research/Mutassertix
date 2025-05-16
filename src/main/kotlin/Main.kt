@@ -11,9 +11,8 @@ fun main() {
 
     for (projectConfiguration in projectConfigurations) {
         val projectName = projectConfiguration.sourceDir.split("/").last()
-        val targetTest = projectConfiguration.targetTest.split(".").last()
 
-        println("> Running the pipeline for project \"$projectName\" with target \"$targetTest\"")
+        println("> Running the pipeline for project \"$projectName\"")
 
         println("> Running first mutation process")
         val initialMutationScore = PitestPipeline().getMutationScore(projectConfiguration)
@@ -28,7 +27,6 @@ fun main() {
         reports.add(
             Report(
                 projectName,
-                targetTest,
                 initialMutationScore,
                 finalMutationScore,
                 finalMutationScore - initialMutationScore
@@ -44,8 +42,8 @@ fun main() {
 fun reportsOutput(report: MutableList<Report>) {
     // Define column headers and widths
     println("\nResults:")
-    val format = "| %-25s | %-25s | %15s | %15s | %15s |"
-    val separator = "-".repeat(111)
+    val format = "| %-25s | %15s | %15s | %15s |"
+    val separator = "-".repeat(83)
 
     // Print header
     println(separator)
@@ -53,7 +51,6 @@ fun reportsOutput(report: MutableList<Report>) {
         String.format(
             format,
             "Project",
-            "Target Class",
             "Initial Score",
             "Final Score",
             "Difference"
@@ -67,7 +64,6 @@ fun reportsOutput(report: MutableList<Report>) {
             String.format(
                 format,
                 r.projectName,
-                r.targetTest,
                 r.initialMutationScore.toString(),
                 r.finalMutationScore.toString(),
                 r.difference.toString()
