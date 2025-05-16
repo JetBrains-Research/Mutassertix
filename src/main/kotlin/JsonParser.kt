@@ -30,6 +30,9 @@ class JsonParser {
                 ProjectConfiguration(
                     sourceDir = sourceDir,
                     projectDependencies = projectDependencies,
+                    libraryDependencies = projectJson.jsonObject["libraryDependencies"]?.jsonArray?.map {
+                        it.jsonPrimitive.content
+                    } ?: emptyList(),
                     targetClass = target.jsonObject["class"]?.jsonPrimitive?.content ?: "",
                     targetTest = target.jsonObject["test"]?.jsonPrimitive?.content ?: ""
                 )

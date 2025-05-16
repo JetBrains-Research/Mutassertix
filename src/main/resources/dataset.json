@@ -51,6 +51,50 @@
           "test": "co.nstant.in.cbor.encoder.MapEncoderTest"
         }
       ]
+    },
+    {
+      "github": "https://github.com/wmixvideo/nfe",
+      "sourceDir": "../nfe",
+      "projectDependencies": [
+        "target/classes",
+        "target/test-classes"
+      ],
+      "targets": [
+        {
+          "class": "com.fincatto.documentofiscal.DFAmbiente",
+          "test": "com.fincatto.documentofiscal.DFAmbienteTest"
+        },
+        {
+          "class": "com.fincatto.documentofiscal.utils.DFUtils",
+          "test": "com.fincatto.documentofiscal.utils.DFUtilsTest"
+        },
+        {
+          "class": "com.fincatto.documentofiscal.validadores.DFIntegerValidador",
+          "test": "com.fincatto.documentofiscal.validadores.DFIntegerValidadorTest"
+        },
+        {
+          "class": "com.fincatto.documentofiscal.DFModelo",
+          "test": "com.fincatto.documentofiscal.DFModeloTest"
+        }
+      ]
+    },
+    {
+      "github": "https://github.com/lightsail-network/java-stellar-sdk",
+      "sourceDir": "../java-stellar-sdk",
+      "projectDependencies": [
+        "build/classes/java/main",
+        "build/classes/java/test"
+      ],
+      "libraryDependencies": [
+        "https://repo1.maven.org/maven2/commons-codec/commons-codec/1.18.0/commons-codec-1.18.0.jar",
+        "https://repo1.maven.org/maven2/org/bouncycastle/bcprov-jdk18on/1.79/bcprov-jdk18on-1.79.jar"
+      ],
+      "targets": [
+        {
+          "class": "org.stellar.sdk.Address",
+          "test": "org.stellar.sdk.AddressTest"
+        }
+      ]
     }
   ]
 }
