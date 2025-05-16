@@ -75,7 +75,7 @@ class PitestCommandLineGenerator {
 
             if (libFile.exists()) {
                 println("> File $jarName exists")
-                return
+                continue
             }
 
             try {

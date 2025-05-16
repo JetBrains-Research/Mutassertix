@@ -22,9 +22,26 @@ class JsonParser {
 
         return jsonElement.jsonObject["projects"]?.jsonArray?.flatMap { projectJson ->
             val sourceDir = projectJson.jsonObject["sourceDir"]?.jsonPrimitive?.content ?: ""
-            val projectDependencies = projectJson.jsonObject["projectDependencies"]?.jsonArray?.map {
-                it.jsonPrimitive.content
-            } ?: emptyList()
+            val buildTool = projectJson.jsonObject["buildTool"]?.jsonPrimitive?.content ?: ""
+            val projectDependencies = when (buildTool) {
+                "maven" -> {
+                    listOf(
+                        "target/classes",
+                        "target/test-classes"
+                    )
+                }
+
+                "gradle" -> {
+                    listOf(
+                        "build/classes/java/main",
+                        "build/classes/java/test"
+                    )
+                }
+
+                else -> {
+                    emptyList()
+                }
+            }
 
             projectJson.jsonObject["targets"]?.jsonArray?.map { target ->
                 ProjectConfiguration(

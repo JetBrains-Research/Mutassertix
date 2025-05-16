@@ -3,10 +3,7 @@
     {
       "github": "https://github.com/GoSimpleLLC/nbvcxz.git",
       "sourceDir": "../nbvcxz",
-      "projectDependencies": [
-        "target/classes",
-        "target/test-classes"
-      ],
+      "buildTool": "maven",
       "targets": [
         {
           "class": "me.gosimple.nbvcxz.Nbvcxz",
@@ -29,10 +26,7 @@
     {
       "github": "https://github.com/c-rack/cbor-java",
       "sourceDir": "../cbor-java",
-      "projectDependencies": [
-        "target/classes",
-        "target/test-classes"
-      ],
+      "buildTool": "maven",
       "targets": [
         {
           "class": "co.nstant.in.cbor.CborBuilder",
@@ -55,10 +49,7 @@
     {
       "github": "https://github.com/wmixvideo/nfe",
       "sourceDir": "../nfe",
-      "projectDependencies": [
-        "target/classes",
-        "target/test-classes"
-      ],
+      "buildTool": "maven",
       "targets": [
         {
           "class": "com.fincatto.documentofiscal.DFAmbiente",
@@ -81,10 +72,7 @@
     {
       "github": "https://github.com/lightsail-network/java-stellar-sdk",
       "sourceDir": "../java-stellar-sdk",
-      "projectDependencies": [
-        "build/classes/java/main",
-        "build/classes/java/test"
-      ],
+      "buildTool": "gradle",
       "libraryDependencies": [
         "https://repo1.maven.org/maven2/commons-codec/commons-codec/1.18.0/commons-codec-1.18.0.jar",
         "https://repo1.maven.org/maven2/org/bouncycastle/bcprov-jdk18on/1.79/bcprov-jdk18on-1.79.jar"
@@ -93,6 +81,18 @@
         {
           "class": "org.stellar.sdk.Address",
           "test": "org.stellar.sdk.AddressTest"
+        },
+        {
+          "class": "org.stellar.sdk.Asset",
+          "test": "org.stellar.sdk.AssetTest"
+        },
+        {
+          "class": "org.stellar.sdk.KeyPair",
+          "test": "org.stellar.sdk.KeyPairTest"
+        },
+        {
+          "class": "org.stellar.sdk.Price",
+          "test": "org.stellar.sdk.PriceTest"
         }
       ]
     }
