@@ -1,3 +1,5 @@
+package utils
+
 import data.ProjectConfiguration
 import java.io.File
 import kotlinx.serialization.json.Json

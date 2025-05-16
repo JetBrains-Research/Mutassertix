@@ -1,5 +1,6 @@
 import data.Report
 import pitest.PitestPipeline
+import utils.JsonParser
 
 /**
  * Main pipeline implementation
