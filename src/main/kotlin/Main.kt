@@ -6,7 +6,7 @@ import utils.JsonParser
  * Main pipeline implementation
  */
 fun main() {
-    val projectConfigurations = JsonParser().getProjectConfigurations("src/main/resources/dataset.json")
+    val projectConfigurations = JsonParser().getProjectConfigurations("src/main/resources/java.json")
 
     val reports = mutableListOf<Report>()
 
