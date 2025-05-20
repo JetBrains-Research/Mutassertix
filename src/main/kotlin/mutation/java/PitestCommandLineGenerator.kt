@@ -41,7 +41,7 @@ class PitestCommandLineGenerator {
      * @param libraryDependencies List of lib dependency paths
      * @return Colon-separated classpath string containing all required dependencies
      */
-    fun getCPLine(sourceDir: String, projectDependencies: List<String>, libraryDependencies: List<String>): String {
+    private fun getCPLine(sourceDir: String, projectDependencies: List<String>, libraryDependencies: List<String>): String {
         installLibraryDependencies(libraryDependencies)
 
         val pitestLibs = listOf(
