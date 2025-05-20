@@ -31,7 +31,7 @@ class JavaMutationPipeline {
         process.waitFor()
 
         // Remove report folder
-        File(projectConfiguration.sourceDir + "/mutation/java").deleteRecursively()
+        File(projectConfiguration.sourceDir + "/pitest").deleteRecursively()
 
         // Parse the PITest output and extract the mutation score
         val mutationScore = PitestReportParser().getMutationScore(output)
