@@ -1,4 +1,4 @@
-package pitest
+package mutation.java
 
 import data.ProjectConfiguration
 import java.io.File
@@ -67,7 +67,7 @@ class PitestCommandLineGenerator {
      *
      * @param libraryDependencies List of lib dependency paths
      */
-    fun installLibraryDependencies(libraryDependencies: List<String>) {
+    private fun installLibraryDependencies(libraryDependencies: List<String>) {
         for (lib in libraryDependencies) {
             val jarName = lib.split("/").last()
 

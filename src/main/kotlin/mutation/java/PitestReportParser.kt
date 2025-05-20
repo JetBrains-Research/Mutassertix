@@ -1,4 +1,4 @@
-package pitest
+package mutation.java
 
 /**
  * Parses PITest mutation testing output to extract relevant metrics.

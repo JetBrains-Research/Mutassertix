@@ -1,4 +1,4 @@
-package utils
+package datasetUtils.java
 
 import data.ProjectConfiguration
 import java.io.File
@@ -7,10 +7,8 @@ import kotlinx.serialization.json.jsonArray
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 
-/**
- * A utility class for parsing JSON files and extracting project configurations.
- */
-class JsonParser {
+class JavaDatasetManager {
+    private val projectsDir = File("projects")
 
     /**
      * Parses a JSON file containing project configuration data and extracts the relevant configurations.
@@ -22,9 +20,18 @@ class JsonParser {
         val json = Json { ignoreUnknownKeys = true }
         val jsonElement = json.parseToJsonElement(File(filepath).readText())
 
-        return jsonElement.jsonArray.map { projectJson ->
-            val sourceDir = projectJson.jsonObject["sourceDir"]?.jsonPrimitive?.content ?: ""
+        val projectConfigurations = mutableListOf<ProjectConfiguration>()
+
+        for (projectJson in jsonElement.jsonArray) {
+            val github = projectJson.jsonObject["github"]?.jsonPrimitive?.content ?: ""
+            val sourceDir = "${projectsDir.path}/${github.split("/").last()}"
             val buildTool = projectJson.jsonObject["buildTool"]?.jsonPrimitive?.content ?: ""
+
+            if (github.isEmpty()) {
+                printErrorMessage(github)
+                continue
+            }
+
             val projectDependencies = when (buildTool) {
                 "maven" -> {
                     listOf(
@@ -41,12 +48,14 @@ class JsonParser {
                 }
 
                 else -> {
-                    emptyList()
+                    printErrorMessage(github)
+                    continue
                 }
             }
 
-            ProjectConfiguration(
+            val projectConfiguration = ProjectConfiguration(
                 sourceDir = sourceDir,
+                buildTool = buildTool,
                 projectDependencies = projectDependencies,
                 libraryDependencies = projectJson.jsonObject["libraryDependencies"]?.jsonArray?.map {
                     it.jsonPrimitive.content
@@ -58,6 +67,16 @@ class JsonParser {
                     it.jsonPrimitive.content
                 } ?: emptyList()
             )
+
+            projectConfigurations.add(projectConfiguration)
         }
+
+        return projectConfigurations
     }
+
+    fun projectRebuild(projectConfiguration: ProjectConfiguration) {
+//        TODO
+    }
+
+    private fun printErrorMessage(github: String) = println("> Error setting up project $github")
 }

@@ -1,7 +1,6 @@
 [
   {
-    "github": "https://github.com/GoSimpleLLC/nbvcxz.git",
-    "sourceDir": "../nbvcxz",
+    "github": "https://github.com/GoSimpleLLC/nbvcxz",
     "buildTool": "maven",
     "targetClasses": [
       "me.gosimple.nbvcxz.Nbvcxz",
@@ -17,7 +16,6 @@
   },
   {
     "github": "https://github.com/c-rack/cbor-java",
-    "sourceDir": "../cbor-java",
     "buildTool": "maven",
     "targetClasses": [
       "co.nstant.in.cbor.CborBuilder",
@@ -33,7 +31,6 @@
   },
   {
     "github": "https://github.com/wmixvideo/nfe",
-    "sourceDir": "../nfe",
     "buildTool": "maven",
     "targetClasses": [
       "com.fincatto.documentofiscal.DFAmbiente",
@@ -50,7 +47,6 @@
   },
   {
     "github": "https://github.com/lightsail-network/java-stellar-sdk",
-    "sourceDir": "../java-stellar-sdk",
     "buildTool": "gradle",
     "libraryDependencies": [
       "https://repo1.maven.org/maven2/commons-codec/commons-codec/1.18.0/commons-codec-1.18.0.jar",

@@ -1,4 +1,4 @@
-package pitest
+package mutation.java
 
 import data.ProjectConfiguration
 import java.io.File
@@ -6,7 +6,7 @@ import java.io.File
 /**
  * Represents a pipeline for running PITest mutation testing.
  */
-class PitestPipeline {
+class JavaMutationPipeline {
 
     /**
      * Runs the Pitest pipeline
@@ -31,7 +31,7 @@ class PitestPipeline {
         process.waitFor()
 
         // Remove report folder
-        File(projectConfiguration.sourceDir + "/pitest").deleteRecursively()
+        File(projectConfiguration.sourceDir + "/mutation/java").deleteRecursively()
 
         // Parse the PITest output and extract the mutation score
         val mutationScore = PitestReportParser().getMutationScore(output)

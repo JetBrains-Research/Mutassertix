@@ -1,29 +1,33 @@
 import data.Report
-import pitest.PitestPipeline
-import utils.JsonParser
+import datasetUtils.java.JavaDatasetManager
+import mutation.java.JavaMutationPipeline
 
 /**
  * Main pipeline implementation
  */
 fun main() {
-    val projectConfigurations = JsonParser().getProjectConfigurations("src/main/resources/java.json")
+    val datasetManager = JavaDatasetManager()
+    val mutationPipeline = JavaMutationPipeline()
+
+    val projectConfigurations = datasetManager.getProjectConfigurations("src/main/resources/java.json")
 
     val reports = mutableListOf<Report>()
 
     for (projectConfiguration in projectConfigurations) {
         val projectName = projectConfiguration.sourceDir.split("/").last()
-
         println("> Running the pipeline for project \"$projectName\"")
 
         println("> Running first mutation process")
-        val initialMutationScore = PitestPipeline().getMutationScore(projectConfiguration)
+        val initialMutationScore = mutationPipeline.getMutationScore(projectConfiguration)
 
         println("> Running AI assertion generation process")
         // TODO AI implementation
-        // TODO rebuilding project
+
+        println("> Rebuilding project")
+        datasetManager.projectRebuild(projectConfiguration)
 
         println("> Running second mutation process")
-        val finalMutationScore = PitestPipeline().getMutationScore(projectConfiguration)
+        val finalMutationScore = mutationPipeline.getMutationScore(projectConfiguration)
 
         reports.add(
             Report(
