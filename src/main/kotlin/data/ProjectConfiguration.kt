@@ -12,7 +12,7 @@ package data
  */
 data class ProjectConfiguration(
     val sourceDir: String,
-    val buildTool: String,
+    val buildTool: BuildTool,
     val projectDependencies: List<String>,
     val libraryDependencies: List<String>,
     val targetClasses: List<String>,

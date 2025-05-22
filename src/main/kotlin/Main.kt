@@ -9,7 +9,7 @@ fun main() {
     val datasetManager = JavaDatasetManager()
     val mutationPipeline = JavaMutationPipeline()
 
-    val projectConfigurations = datasetManager.getProjectConfigurations("src/main/resources/java.json")
+    val projectConfigurations = datasetManager.setUpProjects("src/main/resources/java.json")
 
     val reports = mutableListOf<Report>()
 

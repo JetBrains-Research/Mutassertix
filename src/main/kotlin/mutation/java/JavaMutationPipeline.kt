@@ -2,20 +2,13 @@ package mutation.java
 
 import data.ProjectConfiguration
 import java.io.File
+import mutation.MutationPipeline
 
 /**
  * Represents a pipeline for running PITest mutation testing.
  */
-class JavaMutationPipeline {
-
-    /**
-     * Runs the Pitest pipeline
-     *
-     * @param projectConfiguration Configuration settings for the project to be tested
-     *
-     * @return Complete command line string for executing PITest
-     */
-    fun getMutationScore(projectConfiguration: ProjectConfiguration): Int {
+class JavaMutationPipeline: MutationPipeline {
+    override fun getMutationScore(projectConfiguration: ProjectConfiguration): Int {
         // Generate the PITest command line
         val pitestCommandLine = PitestCommandLineGenerator().getCommand(projectConfiguration)
 

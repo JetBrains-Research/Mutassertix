@@ -1,57 +1,35 @@
 package datasetUtils.java
 
 import data.ProjectConfiguration
+import datasetUtils.DatasetManager
 import java.io.File
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.jsonArray
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 
-class JavaDatasetManager {
+class JavaDatasetManager: DatasetManager {
     private val projectsDir = File("projects")
 
-    /**
-     * Parses a JSON file containing project configuration data and extracts the relevant configurations.
-     *
-     * @param filepath Path to the JSON file containing project configuration information
-     * @return A list of ProjectConfiguration instances representing the extracted configurations
-     */
-    fun getProjectConfigurations(filepath: String): List<ProjectConfiguration> {
+    override fun setUpProjects(filepath: String): List<ProjectConfiguration> {
         val json = Json { ignoreUnknownKeys = true }
         val jsonElement = json.parseToJsonElement(File(filepath).readText())
 
         val projectConfigurations = mutableListOf<ProjectConfiguration>()
 
+        // Iterate through each project in the JSON array
         for (projectJson in jsonElement.jsonArray) {
-            val github = projectJson.jsonObject["github"]?.jsonPrimitive?.content ?: ""
-            val sourceDir = "${projectsDir.path}/${github.split("/").last()}"
-            val buildTool = projectJson.jsonObject["buildTool"]?.jsonPrimitive?.content ?: ""
+            val github = projectJson.jsonObject["github"]?.jsonPrimitive?.content ?: continue
+            val projectName = github.split("/").last()
+            val sourceDir = "${projectsDir.path}/$projectName"
 
-            if (github.isEmpty()) {
-                printErrorMessage(github)
+            val buildTool = try {
+                JavaBuildTool.createByName(projectJson.jsonObject["buildTool"]?.jsonPrimitive?.content ?: "")
+            } catch (_: IllegalArgumentException) {
                 continue
             }
 
-            val projectDependencies = when (buildTool) {
-                "maven" -> {
-                    listOf(
-                        "target/classes",
-                        "target/test-classes"
-                    )
-                }
-
-                "gradle" -> {
-                    listOf(
-                        "build/classes/java/main",
-                        "build/classes/java/test"
-                    )
-                }
-
-                else -> {
-                    printErrorMessage(github)
-                    continue
-                }
-            }
+            val projectDependencies = buildTool.projectDependencies
 
             val projectConfiguration = ProjectConfiguration(
                 sourceDir = sourceDir,
@@ -68,15 +46,14 @@ class JavaDatasetManager {
                 } ?: emptyList()
             )
 
+            println("> Project \"$projectName\" has been added to the dataset")
             projectConfigurations.add(projectConfiguration)
         }
 
         return projectConfigurations
     }
 
-    fun projectRebuild(projectConfiguration: ProjectConfiguration) {
+    override fun projectRebuild(projectConfiguration: ProjectConfiguration) {
 //        TODO
     }
-
-    private fun printErrorMessage(github: String) = println("> Error setting up project $github")
 }
