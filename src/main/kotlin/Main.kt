@@ -1,3 +1,4 @@
+import ai.Agent
 import data.Report
 import dataset.DatasetManager
 import dataset.java.JavaDatasetManager
@@ -8,39 +9,40 @@ import mutation.java.JavaMutationPipeline
  * Main pipeline implementation
  */
 fun main() {
-    val datasetManager: DatasetManager = JavaDatasetManager()
-    val mutationPipeline: MutationPipeline = JavaMutationPipeline()
-
-    val projectConfigurations = datasetManager.setUpProjects("src/main/resources/java.json")
-
-    val reports = mutableListOf<Report>()
-
-    for (projectConfiguration in projectConfigurations) {
-        val projectName = projectConfiguration.sourceDir.split("/").last()
-        println("> Running the pipeline for project \"$projectName\"")
-
-        println("> Running first mutation process")
-        val initialMutationScore = mutationPipeline.getMutationScore(projectConfiguration)
-
-        println("> Running AI assertion generation process")
-        // TODO AI implementation
-
-        println("> Rebuilding project")
-        datasetManager.projectBuild(projectConfiguration)
-
-        println("> Running second mutation process")
-        val finalMutationScore = mutationPipeline.getMutationScore(projectConfiguration)
-
-        reports.add(
-            Report(
-                projectName,
-                initialMutationScore,
-                finalMutationScore,
-                finalMutationScore - initialMutationScore
-            )
-        )
-    }
-    reportsOutput(reports)
+    Agent().run("projects/cbor-java/src/main/java/co/nstant/in/cbor/CborBuilder.java")
+//    val datasetManager: DatasetManager = JavaDatasetManager()
+//    val mutationPipeline: MutationPipeline = JavaMutationPipeline()
+//
+//    val projectConfigurations = datasetManager.setUpProjects("src/main/resources/java.json")
+//
+//    val reports = mutableListOf<Report>()
+//
+//    for (projectConfiguration in projectConfigurations) {
+//        val projectName = projectConfiguration.sourceDir.split("/").last()
+//        println("> Running the pipeline for project \"$projectName\"")
+//
+//        println("> Running first mutation process")
+//        val initialMutationScore = mutationPipeline.getMutationScore(projectConfiguration)
+//
+//        println("> Running AI assertion generation process")
+//        // TODO AI implementation
+//
+//        println("> Rebuilding project")
+//        datasetManager.projectBuild(projectConfiguration)
+//
+//        println("> Running second mutation process")
+//        val finalMutationScore = mutationPipeline.getMutationScore(projectConfiguration)
+//
+//        reports.add(
+//            Report(
+//                projectName,
+//                initialMutationScore,
+//                finalMutationScore,
+//                finalMutationScore - initialMutationScore
+//            )
+//        )
+//    }
+//    reportsOutput(reports)
 }
 
 /**
