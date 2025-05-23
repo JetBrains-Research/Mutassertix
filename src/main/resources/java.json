@@ -1,0 +1,56 @@
+[
+  {
+    "github": "c-rack/cbor-java",
+    "buildTool": "maven",
+    "languagePath": ADD_YOUR_LOCAL_PATH_TO_JAVA_17_HERE,
+    "targetClasses": [
+      "co.nstant.in.cbor.CborBuilder",
+      "co.nstant.in.cbor.CborDecoder",
+      "co.nstant.in.cbor.CborEncoder"
+    ],
+    "targetTests": [
+      "co.nstant.in.cbor.CborBuilderTest",
+      "co.nstant.in.cbor.builder.MapBuilderTest",
+      "co.nstant.in.cbor.decoder.CborDecoderTest",
+      "co.nstant.in.cbor.encoder.MapEncoderTest"
+    ]
+  },
+  {
+    "github": "wmixvideo/nfe",
+    "buildTool": "maven",
+    "languagePath": ADD_YOUR_LOCAL_PATH_TO_JAVA_17_HERE,
+    "targetClasses": [
+      "com.fincatto.documentofiscal.DFAmbiente",
+      "com.fincatto.documentofiscal.utils.DFUtils",
+      "com.fincatto.documentofiscal.validadores.DFIntegerValidador",
+      "com.fincatto.documentofiscal.DFModelo"
+    ],
+    "targetTests": [
+      "com.fincatto.documentofiscal.DFAmbienteTest",
+      "com.fincatto.documentofiscal.utils.DFUtilsTest",
+      "com.fincatto.documentofiscal.validadores.DFIntegerValidadorTest",
+      "com.fincatto.documentofiscal.DFModeloTest"
+    ]
+  },
+  {
+    "github": "lightsail-network/java-stellar-sdk",
+    "buildTool": "gradle",
+    "languagePath": ADD_YOUR_LOCAL_PATH_TO_JAVA_17_HERE,
+    "libraryDependencies": [
+      "https://repo1.maven.org/maven2/commons-codec/commons-codec/1.18.0/commons-codec-1.18.0.jar",
+      "https://repo1.maven.org/maven2/org/bouncycastle/bcprov-jdk18on/1.79/bcprov-jdk18on-1.79.jar"
+    ],
+    "targetClasses": [
+      "org.stellar.sdk.Address",
+      "org.stellar.sdk.Asset",
+      "org.stellar.sdk.KeyPair",
+      "org.stellar.sdk.Price"
+    ],
+    "targetTests": [
+      "org.stellar.sdk.AddressTest",
+      "org.stellar.sdk.AssetTest",
+      "org.stellar.sdk.KeyPairTest",
+      "org.stellar.sdk.PriceTest"
+    ]
+  }
+]
