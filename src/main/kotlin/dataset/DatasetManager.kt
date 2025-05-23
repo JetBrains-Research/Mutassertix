@@ -1,4 +1,4 @@
-package datasetUtils
+package dataset
 
 import data.ProjectConfiguration
 import java.io.File

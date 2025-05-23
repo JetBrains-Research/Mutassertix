@@ -1,8 +1,8 @@
-package datasetUtils.java
+package dataset.java
 
 import data.Language
 import data.ProjectConfiguration
-import datasetUtils.DatasetManager
+import dataset.DatasetManager
 import java.io.File
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.jsonArray

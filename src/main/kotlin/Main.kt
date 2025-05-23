@@ -1,6 +1,6 @@
 import data.Report
-import datasetUtils.DatasetManager
-import datasetUtils.java.JavaDatasetManager
+import dataset.DatasetManager
+import dataset.java.JavaDatasetManager
 import mutation.MutationPipeline
 import mutation.java.JavaMutationPipeline
 
