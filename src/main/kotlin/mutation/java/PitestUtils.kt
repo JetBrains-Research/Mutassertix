@@ -5,7 +5,7 @@ import java.io.File
 import java.net.URL
 
 /**
- * Generator class for creating PITest mutation testing command line arguments.
+ * Utility class for handling PITest mutation testing operations.
  */
 class PitestUtils {
     private val libFolder = "build/libs"
@@ -32,7 +32,7 @@ class PitestUtils {
         return "java -cp ${
             getCPLine(
                 projectConfiguration.sourceDir,
-                projectConfiguration.projectDependencies,
+                projectConfiguration.buildTool.projectDependencies,
                 projectConfiguration.libraryDependencies
             )
         }" +

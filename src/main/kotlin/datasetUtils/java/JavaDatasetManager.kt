@@ -31,14 +31,11 @@ class JavaDatasetManager : DatasetManager() {
                 continue
             }
 
-            val projectDependencies = buildTool.projectDependencies
-
             val projectConfiguration = ProjectConfiguration(
                 language = Language.JAVA,
                 sourceDir = sourceDir,
                 buildTool = buildTool,
                 languagePath = projectJson.jsonObject["languagePath"]?.jsonPrimitive?.content ?: "",
-                projectDependencies = projectDependencies,
                 libraryDependencies = projectJson.jsonObject["libraryDependencies"]?.jsonArray?.map {
                     it.jsonPrimitive.content
                 } ?: emptyList(),

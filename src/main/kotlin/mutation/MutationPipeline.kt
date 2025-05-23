@@ -2,6 +2,9 @@ package mutation
 
 import data.ProjectConfiguration
 
+/**
+ * MutationPipeline defines the interface for executing a mutation testing pipeline.
+ */
 interface MutationPipeline {
     /**
      * Runs the Pitest pipeline
