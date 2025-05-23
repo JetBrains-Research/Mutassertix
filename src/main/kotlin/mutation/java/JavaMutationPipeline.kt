@@ -7,14 +7,13 @@ import mutation.MutationPipeline
 /**
  * Represents a pipeline for running PITest mutation testing.
  */
-class JavaMutationPipeline: MutationPipeline {
+class JavaMutationPipeline : MutationPipeline {
     override fun getMutationScore(projectConfiguration: ProjectConfiguration): Int {
-        // Generate the PITest command line
-        val pitestCommandLine = PitestCommandLineGenerator().getCommand(projectConfiguration)
+        val pitestUtils = PitestUtils()
 
         // Start a new process to execute the PITest command
         val process = ProcessBuilder()
-            .command("sh", "-c", pitestCommandLine)
+            .command("sh", "-c", pitestUtils.getCommand(projectConfiguration))
             .start()
 
         // Store the complete output from the PITest execution
@@ -27,7 +26,7 @@ class JavaMutationPipeline: MutationPipeline {
         File(projectConfiguration.sourceDir + "/pitest").deleteRecursively()
 
         // Parse the PITest output and extract the mutation score
-        val mutationScore = PitestReportParser().getMutationScore(output)
+        val mutationScore = pitestUtils.getMutationScore(output)
 
         println("> Collecting mutation score $mutationScore")
 

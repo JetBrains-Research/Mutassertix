@@ -1,22 +1,8 @@
 [
   {
-    "github": "https://github.com/GoSimpleLLC/nbvcxz",
+    "github": "c-rack/cbor-java",
     "buildTool": "maven",
-    "targetClasses": [
-      "me.gosimple.nbvcxz.Nbvcxz",
-      "me.gosimple.nbvcxz.matching.match.DateMatch",
-      "me.gosimple.nbvcxz.matching.match.DateMatcher",
-      "me.gosimple.nbvcxz.resources.DictionaryUtil"
-    ],
-    "targetTests": [
-      "me.gosimple.nbvcxz.NbvcxzTest",
-      "me.gosimple.nbvcxz.matching.DateMatcherTest",
-      "me.gosimple.nbvcxz.resources.DictionaryUtilTest"
-    ]
-  },
-  {
-    "github": "https://github.com/c-rack/cbor-java",
-    "buildTool": "maven",
+    "languagePath": ADD_YOUR_LOCAL_PATH_TO_JAVA_17_HERE,
     "targetClasses": [
       "co.nstant.in.cbor.CborBuilder",
       "co.nstant.in.cbor.CborDecoder",
@@ -30,8 +16,9 @@
     ]
   },
   {
-    "github": "https://github.com/wmixvideo/nfe",
+    "github": "wmixvideo/nfe",
     "buildTool": "maven",
+    "languagePath": ADD_YOUR_LOCAL_PATH_TO_JAVA_17_HERE,
     "targetClasses": [
       "com.fincatto.documentofiscal.DFAmbiente",
       "com.fincatto.documentofiscal.utils.DFUtils",
@@ -46,8 +33,9 @@
     ]
   },
   {
-    "github": "https://github.com/lightsail-network/java-stellar-sdk",
+    "github": "lightsail-network/java-stellar-sdk",
     "buildTool": "gradle",
+    "languagePath": ADD_YOUR_LOCAL_PATH_TO_JAVA_17_HERE,
     "libraryDependencies": [
       "https://repo1.maven.org/maven2/commons-codec/commons-codec/1.18.0/commons-codec-1.18.0.jar",
       "https://repo1.maven.org/maven2/org/bouncycastle/bcprov-jdk18on/1.79/bcprov-jdk18on-1.79.jar"

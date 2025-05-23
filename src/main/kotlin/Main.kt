@@ -1,13 +1,15 @@
 import data.Report
+import datasetUtils.DatasetManager
 import datasetUtils.java.JavaDatasetManager
+import mutation.MutationPipeline
 import mutation.java.JavaMutationPipeline
 
 /**
  * Main pipeline implementation
  */
 fun main() {
-    val datasetManager = JavaDatasetManager()
-    val mutationPipeline = JavaMutationPipeline()
+    val datasetManager: DatasetManager = JavaDatasetManager()
+    val mutationPipeline: MutationPipeline = JavaMutationPipeline()
 
     val projectConfigurations = datasetManager.setUpProjects("src/main/resources/java.json")
 
@@ -24,7 +26,7 @@ fun main() {
         // TODO AI implementation
 
         println("> Rebuilding project")
-        datasetManager.projectRebuild(projectConfiguration)
+        datasetManager.projectBuild(projectConfiguration)
 
         println("> Running second mutation process")
         val finalMutationScore = mutationPipeline.getMutationScore(projectConfiguration)
