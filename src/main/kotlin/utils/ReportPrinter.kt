@@ -10,8 +10,8 @@ object ReportPrinter {
     fun print(report: MutableList<Report>) {
         // Define column headers and widths
         println("\nResults:")
-        val format = "| %-25s | %15s | %15s | %15s |"
-        val separator = "-".repeat(83)
+        val format = "| %-30s | %15s | %15s | %15s |"
+        val separator = "-".repeat(88)
 
         // Print header
         println(separator)

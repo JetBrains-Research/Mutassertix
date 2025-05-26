@@ -64,15 +64,15 @@ object Agent {
         ) {
             handleEvents {
                 onToolCall = { tool: Tool<*, *>, toolArgs: Tool.Args ->
-                    println("> Tool called: tool ${tool.name}, args $toolArgs")
+                    println("> Agent: Tool called - tool ${tool.name}, args $toolArgs")
                 }
 
                 onAgentRunError = { _: String, throwable: Throwable ->
-                    println("> ERROR: ${throwable.message}\n${throwable.stackTraceToString()}")
+                    println("> Agent: ERROR ${throwable.message}\n${throwable.stackTraceToString()}")
                 }
 
                 onAgentFinished = { _: String, result: String? ->
-                    println("> Result: $result")
+                    println("> Agent: Result - $result")
                 }
             }
         }
@@ -90,7 +90,7 @@ object Agent {
                 Target Scope:
                 - Classes under test: ${projectConfiguration.targetClasses.joinToString(", ")}
                 - Test classes: ${projectConfiguration.targetTests.joinToString(", ")}
-                                
+                
                 Goal:
                 Improve the mutation score by strengthening assertions to detect potential mutations in the code.
                 

@@ -10,7 +10,7 @@ import utils.ReportPrinter
 fun main() {
     val languageConfig: LanguageConfig = Java()
 
-    val projectConfigurations = languageConfig.datasetManager.setUpProjects(languageConfig.name)
+    val projectConfigurations = languageConfig.datasetManager.setUpProjects(languageConfig)
 
     val reports = mutableListOf<Report>()
 

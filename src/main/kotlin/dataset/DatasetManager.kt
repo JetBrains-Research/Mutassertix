@@ -2,6 +2,7 @@ package dataset
 
 import data.ProjectConfiguration
 import java.io.File
+import languages.LanguageConfig
 
 /**
  * Interface representing a manager responsible for handling operations on datasets.
@@ -12,10 +13,10 @@ abstract class DatasetManager {
     /**
      * Parses a JSON file containing project configuration data and extracts the relevant configurations.
      *
-     * @param languageName Name of the language for which the projects are being extracted.
+     * @param languageConfig Configuration settings for the language used in the dataset.
      * @return A list of ProjectConfiguration instances representing the extracted configurations
      */
-    abstract fun setUpProjects(languageName: String): List<ProjectConfiguration>
+    abstract fun setUpProjects(languageConfig: LanguageConfig): List<ProjectConfiguration>
 
     /**
      * Builds the project specified in the given ProjectConfiguration instance.

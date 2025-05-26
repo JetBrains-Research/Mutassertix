@@ -8,12 +8,12 @@ import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.jsonArray
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
+import languages.LanguageConfig
 
 class JavaDatasetManager : DatasetManager() {
     private val datasetJsonPath = "src/main/resources/java.json"
-    private val successfulBuild = "BUILD SUCCESS"
 
-    override fun setUpProjects(languageName: String): List<ProjectConfiguration> {
+    override fun setUpProjects(languageConfig: LanguageConfig): List<ProjectConfiguration> {
         val json = Json { ignoreUnknownKeys = true }
         val jsonElement = json.parseToJsonElement(File(datasetJsonPath).readText())
 
@@ -36,7 +36,7 @@ class JavaDatasetManager : DatasetManager() {
 
             val projectConfiguration = ProjectConfiguration(
                 projectName = sourceDir.split("/").last(),
-                language = languageName,
+                language = languageConfig.name,
                 sourceDir = sourceDir,
                 buildTool = buildTool,
                 languagePath = ConfigReader().javaPath,
@@ -51,7 +51,7 @@ class JavaDatasetManager : DatasetManager() {
                 } ?: emptyList()
             )
 
-            if (projectBuild(projectConfiguration) != successfulBuild) continue
+            if (projectBuild(projectConfiguration) != (buildTool as JavaBuildTool).successfulBuildComment) continue
 
             println("> Project \"$projectName\" has been added to the dataset")
             projectConfigurations.add(projectConfiguration)
@@ -76,8 +76,10 @@ class JavaDatasetManager : DatasetManager() {
 
             process.waitFor()
 
-            if (outputMessage.contains(successfulBuild)) {
-                successfulBuild
+            val successfulBuildComment = (projectConfiguration.buildTool as JavaBuildTool).successfulBuildComment
+
+            if (outputMessage.contains(successfulBuildComment)) {
+                successfulBuildComment
             } else {
                 "Output:\n${
                     outputMessage.lines()
