@@ -11,7 +11,7 @@ interface MutationPipeline {
      *
      * @param projectConfiguration Configuration settings for the project to be tested
      *
-     * @return Complete command line string for executing PITest
+     * @return Mutation score
      */
     fun getMutationScore(projectConfiguration: ProjectConfiguration): Int
 }

@@ -1,7 +1,6 @@
 package dataset.java
 
 import data.ConfigReader
-import data.Language
 import data.ProjectConfiguration
 import dataset.DatasetManager
 import java.io.File
@@ -11,9 +10,12 @@ import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 
 class JavaDatasetManager : DatasetManager() {
-    override fun setUpProjects(filepath: String): List<ProjectConfiguration> {
+    private val datasetJsonPath = "src/main/resources/java.json"
+    private val successfulBuild = "BUILD SUCCESS"
+
+    override fun setUpProjects(languageName: String): List<ProjectConfiguration> {
         val json = Json { ignoreUnknownKeys = true }
-        val jsonElement = json.parseToJsonElement(File(filepath).readText())
+        val jsonElement = json.parseToJsonElement(File(datasetJsonPath).readText())
 
         val projectConfigurations = mutableListOf<ProjectConfiguration>()
 
@@ -33,7 +35,8 @@ class JavaDatasetManager : DatasetManager() {
             }
 
             val projectConfiguration = ProjectConfiguration(
-                language = Language.JAVA,
+                projectName = sourceDir.split("/").last(),
+                language = languageName,
                 sourceDir = sourceDir,
                 buildTool = buildTool,
                 languagePath = ConfigReader().javaPath,
@@ -48,7 +51,7 @@ class JavaDatasetManager : DatasetManager() {
                 } ?: emptyList()
             )
 
-            if (!projectBuild(projectConfiguration)) continue
+            if (projectBuild(projectConfiguration) != successfulBuild) continue
 
             println("> Project \"$projectName\" has been added to the dataset")
             projectConfigurations.add(projectConfiguration)
@@ -57,8 +60,10 @@ class JavaDatasetManager : DatasetManager() {
         return projectConfigurations
     }
 
-    override fun projectBuild(projectConfiguration: ProjectConfiguration): Boolean {
-        try {
+    override fun projectBuild(projectConfiguration: ProjectConfiguration): String {
+        removeTargetFiles(projectConfiguration)
+
+        val result = try {
             val shellCommand = """
                 export JAVA_HOME=${projectConfiguration.languagePath} && ${projectConfiguration.buildTool.buildCommand}
             """.trimIndent()
@@ -67,37 +72,36 @@ class JavaDatasetManager : DatasetManager() {
                 .directory(File(projectConfiguration.sourceDir))
                 .start()
 
-            process.inputStream.bufferedReader().use { it.readText() }
-            process.errorStream.bufferedReader().use { it.readText() }
+            val outputMessage = process.inputStream.bufferedReader().use { it.readText() }
 
             process.waitFor()
 
-            return checkTargetFilesExist(projectConfiguration)
-        } catch (_: Exception) {
-            return false
+            if (outputMessage.contains(successfulBuild)) {
+                successfulBuild
+            } else {
+                "Output:\n${
+                    outputMessage.lines()
+                        .filter { !it.trim().startsWith("[INFO]") }
+                        .filter { !it.trim().startsWith("[WARNING]") }
+                        .joinToString("\n")
+                }"
+            }
+        } catch (e: Exception) {
+            e.message ?: "Unknown error"
         }
+
+        println("> Build result: $result")
+
+        return result
     }
 
     /**
-     * Verifies the existence of the compiled class files for the specified target classes and tests
-     * in the project configuration.
+     * Removes target directories associated with compiled class files from the project source directory.
      *
      * @param projectConfiguration The project configuration containing information about source directories,
      * dependencies, target classes, and tests.
-     * @return True if all the target class and test files exist, otherwise false.
      */
-    private fun checkTargetFilesExist(projectConfiguration: ProjectConfiguration): Boolean {
-        fun buildClassFilePath(className: String, dependencyIndex: Int): String =
-            "${projectConfiguration.sourceDir}/${projectConfiguration.buildTool.projectDependencies[dependencyIndex]}/${
-                className.replace(".", "/")
-            }.class"
-
-        fun checkFilesExist(targetFile: List<String>, dependencyIndex: Int): Boolean =
-            targetFile.all { className ->
-                File(buildClassFilePath(className, dependencyIndex)).exists()
-            }
-
-        return checkFilesExist(projectConfiguration.targetClasses, 0) &&
-                checkFilesExist(projectConfiguration.targetTests, 1)
+    private fun removeTargetFiles(projectConfiguration: ProjectConfiguration) {
+        for (index in 0..1) File("${projectConfiguration.sourceDir}/${projectConfiguration.buildTool.projectDependencies[index]}").deleteRecursively()
     }
 }

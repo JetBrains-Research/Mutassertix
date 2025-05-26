@@ -12,18 +12,18 @@ abstract class DatasetManager {
     /**
      * Parses a JSON file containing project configuration data and extracts the relevant configurations.
      *
-     * @param filepath Path to the JSON file containing project configuration information
+     * @param languageName Name of the language for which the projects are being extracted.
      * @return A list of ProjectConfiguration instances representing the extracted configurations
      */
-    abstract fun setUpProjects(filepath: String): List<ProjectConfiguration>
+    abstract fun setUpProjects(languageName: String): List<ProjectConfiguration>
 
     /**
      * Builds the project specified in the given ProjectConfiguration instance.
      *
      * @param projectConfiguration Configuration settings for the project to be rebuilt
-     * @return True if the project was built successfully, otherwise false
+     * @return Building result
      */
-    abstract fun projectBuild(projectConfiguration: ProjectConfiguration): Boolean
+    abstract fun projectBuild(projectConfiguration: ProjectConfiguration): String
 
     /**
      * Clones a project repository from the given GitHub URL.

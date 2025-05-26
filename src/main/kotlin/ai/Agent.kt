@@ -16,16 +16,23 @@ import ai.koog.prompt.executor.clients.openai.OpenAIModels
 import ai.koog.prompt.executor.llms.all.simpleOpenAIExecutor
 import ai.koog.prompt.executor.model.PromptExecutor
 import data.ConfigReader
+import data.ProjectConfiguration
+import dataset.DatasetManager
 import kotlinx.coroutines.runBlocking
+import mutation.MutationPipeline
 
-class Agent {
-    fun run(filePath: String) = runBlocking {
+object Agent {
+    fun run(
+        projectConfiguration: ProjectConfiguration,
+        datasetManager: DatasetManager,
+        mutationPipeline: MutationPipeline
+    ) = runBlocking {
         val executor: PromptExecutor = simpleOpenAIExecutor(ConfigReader().openAIToken)
 
         val toolRegistry = ToolRegistry {
             tool(AskUser)
             tool(SayToUser)
-            tools(Tools().asTools())
+            tools(Tools(projectConfiguration, datasetManager, mutationPipeline).asTools())
         }
 
         val strategy = strategy("basic-strategy") {
@@ -43,10 +50,10 @@ class Agent {
 
         val agentConfig = AIAgentConfig(
             prompt = prompt("basic-strategy") {
-                system("You are a file content manager.")
+                system("You are an assertion generator.")
             },
             model = OpenAIModels.Chat.GPT4o,
-            maxAgentIterations = 50
+            maxAgentIterations = 100
         )
 
         val agent = AIAgent(
@@ -71,7 +78,32 @@ class Agent {
         }
 
         runBlocking {
-            agent.run("Remove all code in $filePath, and add here hello world implementation")
+            agent.run(
+                """
+                Please improve the assertions in the following Java project by directly modifying the test files:
+                
+                Project Details:
+                - Programming Language: ${projectConfiguration.language}
+                - Build System: ${projectConfiguration.buildTool}
+                - Source Location: ${projectConfiguration.sourceDir}
+                
+                Target Scope:
+                - Classes under test: ${projectConfiguration.targetClasses.joinToString(", ")}
+                - Test classes: ${projectConfiguration.targetTests.joinToString(", ")}
+                                
+                Goal:
+                Improve the mutation score by strengthening assertions to detect potential mutations in the code.
+                
+                Hints:
+                - Before calculating the mutation, the project must always be successfully built up.
+                - Calculate mutation score before and after the assertion generation.
+                
+                Task:
+                - Analyze the test files and identify assertions that can be improved.
+                - Directly modify the test files to enhance the assertions.
+                - Make sure, that your modifications increase the mutation score. Repeat operations otherwise.
+                """.trimIndent()
+            )
         }
     }
 }
