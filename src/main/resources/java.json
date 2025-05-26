@@ -1,17 +1,29 @@
 [
   {
-    "github": "c-rack/cbor-java",
+    "github": "Bindambc/whatsapp-business-java-api",
     "buildTool": "maven",
+    "libraryDependencies": [
+      "https://repo1.maven.org/maven2/com/squareup/okhttp3/okhttp/5.0.0-alpha.14/okhttp-5.0.0-alpha.14.jar",
+      "https://repo1.maven.org/maven2/com/squareup/retrofit2/retrofit/3.0.0/retrofit-3.0.0.jar",
+      "https://repo1.maven.org/maven2/com/squareup/retrofit2/converter-jackson/3.0.0/converter-jackson-3.0.0.jar",
+      "https://repo1.maven.org/maven2/com/fasterxml/jackson/core/jackson-annotations/2.19.0/jackson-annotations-2.19.0.jar",
+      "https://repo1.maven.org/maven2/com/fasterxml/jackson/core/jackson-core/2.19.0/jackson-core-2.19.0.jar",
+      "https://repo1.maven.org/maven2/com/fasterxml/jackson/core/jackson-databind/2.19.0/jackson-databind-2.19.0.jar",
+      "https://repo1.maven.org/maven2/com/squareup/okio/okio-jvm/3.9.1/okio-jvm-3.9.1.jar",
+      "https://repo1.maven.org/maven2/com/squareup/okhttp3/mockwebserver3/5.0.0-alpha.14/mockwebserver3-5.0.0-alpha.14.jar"
+    ],
     "targetClasses": [
-      "co.nstant.in.cbor.CborBuilder",
-      "co.nstant.in.cbor.CborDecoder",
-      "co.nstant.in.cbor.CborEncoder"
+      "com.whatsapp.api.WhatsappApiFactory",
+      "com.whatsapp.api.WhatsappApiServiceGenerator",
+      "com.whatsapp.api.service.WhatsappBusinessManagementApiService",
+      "com.whatsapp.api.domain.messages.Message",
+      "com.whatsapp.api.domain.webhook.WebHook"
     ],
     "targetTests": [
-      "co.nstant.in.cbor.CborBuilderTest",
-      "co.nstant.in.cbor.builder.MapBuilderTest",
-      "co.nstant.in.cbor.decoder.CborDecoderTest",
-      "co.nstant.in.cbor.encoder.MapEncoderTest"
+      "com.whatsapp.api.WhatsappApiFactoryTest",
+      "com.whatsapp.api.domain.messages.MessageTest",
+      "com.whatsapp.api.WhatsappApiServiceGeneratorTest",
+      "com.whatsapp.api.domain.webhook.WebHookPayloadTest"
     ]
   },
   {
@@ -28,26 +40,6 @@
       "com.fincatto.documentofiscal.utils.DFUtilsTest",
       "com.fincatto.documentofiscal.validadores.DFIntegerValidadorTest",
       "com.fincatto.documentofiscal.DFModeloTest"
-    ]
-  },
-  {
-    "github": "lightsail-network/java-stellar-sdk",
-    "buildTool": "gradle",
-    "libraryDependencies": [
-      "https://repo1.maven.org/maven2/commons-codec/commons-codec/1.18.0/commons-codec-1.18.0.jar",
-      "https://repo1.maven.org/maven2/org/bouncycastle/bcprov-jdk18on/1.79/bcprov-jdk18on-1.79.jar"
-    ],
-    "targetClasses": [
-      "org.stellar.sdk.Address",
-      "org.stellar.sdk.Asset",
-      "org.stellar.sdk.KeyPair",
-      "org.stellar.sdk.Price"
-    ],
-    "targetTests": [
-      "org.stellar.sdk.AddressTest",
-      "org.stellar.sdk.AssetTest",
-      "org.stellar.sdk.KeyPairTest",
-      "org.stellar.sdk.PriceTest"
     ]
   }
 ]

@@ -66,8 +66,11 @@ class PitestUtils {
             "junit-platform-launcher-1.12.2.jar",
             "junit-platform-engine-1.12.2.jar",
             "junit-jupiter-engine-5.12.2.jar",
+            "kotlin-stdlib-2.1.21.jar",
             "opentest4j-1.3.0.jar",
-            "hamcrest-core-1.3.jar"
+            "hamcrest-core-1.3.jar",
+            "mockito-core-5.18.0.jar",
+            "mockito-junit-jupiter-5.18.0.jar"
         ) + libraryDependencies.map { it.split("/").last() }
 
         return (projectDependencies.map { "$sourceDir/$it" } + pitestLibs.map { "$libFolder/$it" }).joinToString(":")
