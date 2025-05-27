@@ -78,5 +78,32 @@
       "com.fincatto.documentofiscal.validadores.DFIntegerValidadorTest",
       "com.fincatto.documentofiscal.DFModeloTest"
     ]
+  },
+  {
+    "github": "aws/event-ruler",
+    "buildTool": "maven",
+    "libraryDependencies": [
+      "https://repo1.maven.org/maven2/com/squareup/retrofit2/converter-jackson/3.0.0/converter-jackson-3.0.0.jar",
+      "https://repo1.maven.org/maven2/com/fasterxml/jackson/core/jackson-annotations/2.19.0/jackson-annotations-2.19.0.jar",
+      "https://repo1.maven.org/maven2/com/fasterxml/jackson/core/jackson-core/2.19.0/jackson-core-2.19.0.jar",
+      "https://repo1.maven.org/maven2/com/fasterxml/jackson/core/jackson-databind/2.19.0/jackson-databind-2.19.0.jar",
+      "https://repo1.maven.org/maven2/ch/randelshofer/fastdoubleparser/2.0.1/fastdoubleparser-2.0.1.jar"
+    ],
+    "targetClasses": [
+      "software.amazon.event.ruler.Path",
+      "software.amazon.event.ruler.Patterns",
+      "software.amazon.event.ruler.ArrayMembership",
+      "software.amazon.event.ruler.ComparableNumber",
+      "software.amazon.event.ruler.NameStateWithPattern",
+      "software.amazon.event.ruler.CompositeByteTransition"
+    ],
+    "targetTests": [
+      "software.amazon.event.ruler.PathTest",
+      "software.amazon.event.ruler.PatternsTest",
+      "software.amazon.event.ruler.ArrayMembershipTest",
+      "software.amazon.event.ruler.ComparableNumberTest",
+      "software.amazon.event.ruler.NameStateWithPatternTest",
+      "software.amazon.event.ruler.CompositeByteTransitionTest"
+    ]
   }
 ]
