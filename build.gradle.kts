@@ -21,6 +21,7 @@ dependencies {
 
     // Pitest dependencies
     testImplementation("org.hamcrest:hamcrest:3.0")
+    implementation("org.testng:testng:7.11.0")
     implementation("org.mockito:mockito-core:5.18.0")
     implementation("org.mockito:mockito-junit-jupiter:5.18.0")
     implementation("org.pitest:pitest-command-line:1.19.1")

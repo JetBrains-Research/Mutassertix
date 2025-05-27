@@ -1,5 +1,19 @@
 [
   {
+    "github": "LMAX-Exchange/Simple-DSL",
+    "buildTool": "gradle",
+    "targetClasses": [
+      "com.lmax.simpledsl.internal.RepeatingParamValues",
+      "com.lmax.simpledsl.internal.SimpleDslParam",
+      "com.lmax.simpledsl.internal.NameValuePair"
+    ],
+    "targetTests": [
+      "com.lmax.simpledsl.internal.RepeatingParamValuesTest",
+      "com.lmax.simpledsl.internal.SimpleDslParamTest",
+      "com.lmax.simpledsl.internal.NameValuePairTest"
+    ]
+  },
+  {
     "github": "BrightSpots/rcv",
     "buildTool": "gradle",
     "libraryDependencies": [

@@ -70,7 +70,8 @@ class PitestUtils {
             "opentest4j-1.3.0.jar",
             "hamcrest-core-1.3.jar",
             "mockito-core-5.18.0.jar",
-            "mockito-junit-jupiter-5.18.0.jar"
+            "mockito-junit-jupiter-5.18.0.jar",
+            "testng-7.11.0.jar"
         ) + libraryDependencies.map { it.split("/").last() }
 
         return (projectDependencies.map { "$sourceDir/$it" } + pitestLibs.map { "$libFolder/$it" }).joinToString(":")

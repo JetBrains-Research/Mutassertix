@@ -30,7 +30,6 @@ object Agent {
         val executor: PromptExecutor = simpleOpenAIExecutor(ConfigReader().openAIToken)
 
         val toolRegistry = ToolRegistry {
-            tool(AskUser)
             tool(SayToUser)
             tools(Tools(projectConfiguration, datasetManager, mutationPipeline).asTools())
         }
