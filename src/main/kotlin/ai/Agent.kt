@@ -8,8 +8,6 @@ import ai.koog.agents.core.dsl.extension.*
 import ai.koog.agents.core.tools.Tool
 import ai.koog.agents.core.tools.ToolRegistry
 import ai.koog.agents.core.tools.reflect.asTools
-import ai.koog.agents.ext.tool.AskUser
-import ai.koog.agents.ext.tool.SayToUser
 import ai.koog.agents.local.features.eventHandler.feature.handleEvents
 import ai.koog.prompt.dsl.prompt
 import ai.koog.prompt.executor.clients.openai.OpenAIModels
@@ -30,7 +28,6 @@ object Agent {
         val executor: PromptExecutor = simpleOpenAIExecutor(ConfigReader().openAIToken)
 
         val toolRegistry = ToolRegistry {
-            tool(SayToUser)
             tools(Tools(projectConfiguration, datasetManager, mutationPipeline).asTools())
         }
 
@@ -49,10 +46,33 @@ object Agent {
 
         val agentConfig = AIAgentConfig(
             prompt = prompt("basic-strategy") {
-                system("You are an assertion generator.")
+                system(
+                    """
+                    You are an intelligent assertion generator.
+                    Your goal is to increase the project's mutation score.
+
+                    Do not finish agent execution before processing all test files.
+
+                    Follow these steps per each test file separately:
+                    1. Analysis
+                       - Record current mutation score.
+                       - Identify existing assertions.
+                       - Identify target class under test.
+                       - Look for uncovered scenarios in the target class under test file.
+
+                    2. Enhancement
+                       - Generate new assertions for the test file.
+
+                    3. Validation
+                       - Build project. Fix errors if any. After 3 unsuccessful attempts reset the test file and proceed to next file.
+                       - Calculate new mutation score.
+                       - If score improves: proceed to next file.
+                       - If no improvement: retry with different strategy. After 5 unsuccessful attempts proceed to next file.
+                """.trimIndent()
+                )
             },
             model = OpenAIModels.Chat.GPT4o,
-            maxAgentIterations = 100
+            maxAgentIterations = 1000
         )
 
         val agent = AIAgent(
@@ -67,7 +87,7 @@ object Agent {
                 }
 
                 onAgentRunError = { _: String, throwable: Throwable ->
-                    println("> Agent: ERROR ${throwable.message}\n${throwable.stackTraceToString()}")
+                    println("> Agent: ERROR - ${throwable.message}\n${throwable.stackTraceToString()}")
                 }
 
                 onAgentFinished = { _: String, result: String? ->
@@ -79,8 +99,6 @@ object Agent {
         runBlocking {
             agent.run(
                 """
-                Please improve the assertions in the following Java project by directly modifying the test files:
-                
                 Project Details:
                 - Programming Language: ${projectConfiguration.language}
                 - Build System: ${projectConfiguration.buildTool}
@@ -89,18 +107,6 @@ object Agent {
                 Target Scope:
                 - Classes under test: ${projectConfiguration.targetClasses.joinToString(", ")}
                 - Test classes: ${projectConfiguration.targetTests.joinToString(", ")}
-                
-                Goal:
-                Improve the mutation score by strengthening assertions to detect potential mutations in the code.
-                
-                Hints:
-                - Before calculating the mutation, the project must always be successfully built up.
-                - Calculate mutation score before and after the assertion generation.
-                
-                Task:
-                - Analyze the test files and identify assertions that can be improved.
-                - Directly modify the test files to enhance the assertions.
-                - Make sure, that your modifications increase the mutation score. Repeat operations otherwise.
                 """.trimIndent()
             )
         }
