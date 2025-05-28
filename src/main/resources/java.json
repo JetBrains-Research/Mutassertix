@@ -1,5 +1,34 @@
 [
   {
+    "github": "awslabs/aws-java-nio-spi-for-s3",
+    "buildTool": "gradle",
+    "libraryDependencies": [
+      "https://repo1.maven.org/maven2/software/amazon/awssdk/s3/2.31.51/s3-2.31.51.jar",
+      "https://repo1.maven.org/maven2/software/amazon/awssdk/aws-core/2.31.9/aws-core-2.31.9.jar",
+      "https://repo1.maven.org/maven2/org/assertj/assertj-core/3.27.3/assertj-core-3.27.3.jar",
+      "https://repo1.maven.org/maven2/software/amazon/awssdk/sdk-core/2.31.51/sdk-core-2.31.51.jar",
+      "https://repo1.maven.org/maven2/net/bytebuddy/byte-buddy/1.17.5/byte-buddy-1.17.5.jar",
+      "https://repo1.maven.org/maven2/net/bytebuddy/byte-buddy-agent/1.17.5/byte-buddy-agent-1.17.5.jar",
+      "https://repo1.maven.org/maven2/org/objenesis/objenesis/3.4/objenesis-3.4.jar",
+      "https://repo1.maven.org/maven2/org/slf4j/slf4j-api/2.0.17/slf4j-api-2.0.17.jar",
+      "https://repo1.maven.org/maven2/software/amazon/awssdk/utils/2.31.51/utils-2.31.51.jar",
+      "https://repo1.maven.org/maven2/software/amazon/awssdk/crt/aws-crt/0.38.3/aws-crt-0.38.3.jar",
+      "https://repo1.maven.org/maven2/software/amazon/awssdk/http-client-spi/2.31.51/http-client-spi-2.31.51.jar"
+    ],
+    "targetClasses": [
+      "software.amazon.nio.spi.s3.util.S3XFileSystemInfo",
+      "software.amazon.nio.spi.s3.Crc32cFileIntegrityCheck",
+      "software.amazon.nio.spi.s3.PosixLikePathRepresentation",
+      "software.amazon.nio.spi.s3.S3OpenOption"
+    ],
+    "targetTests": [
+      "software.amazon.nio.spi.s3.util.S3XFileSystemInfoTest",
+      "software.amazon.nio.spi.s3.Crc32cFileIntegrityCheckTest",
+      "software.amazon.nio.spi.s3.PosixLikePathRepresentationTest",
+      "software.amazon.nio.spi.s3.S3OpenOptionTest"
+    ]
+  },
+  {
     "github": "LMAX-Exchange/Simple-DSL",
     "buildTool": "gradle",
     "targetClasses": [
