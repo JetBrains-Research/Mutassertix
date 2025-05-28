@@ -67,7 +67,7 @@ object Agent {
                        - Build project. Fix errors if any. After 3 unsuccessful attempts reset the test file and proceed to next file.
                        - Calculate new mutation score.
                        - If score improves: proceed to next file.
-                       - If no improvement: retry with different strategy. After 5 unsuccessful attempts proceed to next file.
+                       - If no improvement: retry with different strategy. After 3 unsuccessful attempts proceed to next file.
                 """.trimIndent()
                 )
             },
