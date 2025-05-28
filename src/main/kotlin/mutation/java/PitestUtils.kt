@@ -49,7 +49,6 @@ class PitestUtils(private val projectConfiguration: ProjectConfiguration) {
                 " --targetClasses ${projectConfiguration.targetClasses.joinToString(",")}" +
                 " --targetTests ${projectConfiguration.targetTests.joinToString(",")}" +
                 " --sourceDirs ${projectConfiguration.sourceDir}" +
-                " --threads 8" +
                 " --verbosity VERBOSE"
     }
 
