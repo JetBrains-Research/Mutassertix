@@ -1,5 +1,6 @@
 package dataset.java
 
+import data.ConfigReader
 import data.ProjectConfiguration
 import dataset.DatasetManager
 import java.io.File
@@ -38,7 +39,7 @@ class JavaDatasetManager : DatasetManager() {
                 language = languageConfig.name,
                 sourceDir = sourceDir,
                 buildTool = buildTool,
-                languagePath = System.getenv("JAVA_PATH"),
+                languagePath = ConfigReader().javaPath,
                 libraryDependencies = projectJson.jsonObject["libraryDependencies"]?.jsonArray?.map {
                     it.jsonPrimitive.content
                 } ?: emptyList(),
