@@ -1,6 +1,5 @@
 package dataset.java
 
-import data.ConfigReader
 import data.ProjectConfiguration
 import dataset.DatasetManager
 import java.io.File
@@ -39,7 +38,7 @@ class JavaDatasetManager : DatasetManager() {
                 language = languageConfig.name,
                 sourceDir = sourceDir,
                 buildTool = buildTool,
-                languagePath = ConfigReader().javaPath,
+                languagePath = System.getenv("JAVA_PATH"),
                 libraryDependencies = projectJson.jsonObject["libraryDependencies"]?.jsonArray?.map {
                     it.jsonPrimitive.content
                 } ?: emptyList(),
@@ -70,6 +69,7 @@ class JavaDatasetManager : DatasetManager() {
 
             val process = ProcessBuilder("/bin/sh", "-c", shellCommand)
                 .directory(File(projectConfiguration.sourceDir))
+                .redirectErrorStream(true)
                 .start()
 
             val outputMessage = process.inputStream.bufferedReader().use { it.readText() }

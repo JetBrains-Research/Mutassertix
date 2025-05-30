@@ -14,6 +14,7 @@ class JavaMutationPipeline : MutationPipeline {
         // Start a new process to execute the PITest command
         val process = ProcessBuilder()
             .command("sh", "-c", pitestUtils.getCommand())
+            .redirectErrorStream(true)
             .start()
 
         process.inputStream.bufferedReader().use { it.readText() }

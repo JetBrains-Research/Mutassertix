@@ -72,7 +72,7 @@ class Tools(
 
     @Tool
     @LLMDescription("Builds the project")
-    fun buildProject (): String = datasetManager.projectBuild(projectConfiguration)
+    fun buildProject(): String = datasetManager.projectBuild(projectConfiguration)
 
     @Tool
     @LLMDescription("Return the current mutation score")
