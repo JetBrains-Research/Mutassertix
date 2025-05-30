@@ -1,5 +1,25 @@
 [
   {
+    "github": "bhlangonijr/chesslib",
+    "libraryDependencies": [
+      "https://repo1.maven.org/maven2/org/apache/commons/commons-lang3/3.17.0/commons-lang3-3.17.0.jar"
+    ],
+    "buildTool": "maven",
+    "targetClasses": [
+      "com.github.bhlangonijr.chesslib.move.MoveList",
+      "com.github.bhlangonijr.chesslib.PieceType",
+      "com.github.bhlangonijr.chesslib.unicode.UnicodePrinter",
+      "com.github.bhlangonijr.chesslib.PieceType"
+    ],
+    "targetTests": [
+      "com.github.bhlangonijr.chesslib.move.MoveListTest",
+      "com.github.bhlangonijr.chesslib.PieceTypeTest",
+      "com.github.bhlangonijr.chesslib.unicode.UnicodePrinterTest",
+      "com.github.bhlangonijr.chesslib.PieceTest",
+      "com.github.bhlangonijr.chesslib.PieceTypeTest"
+    ]
+  },
+  {
     "github": "awslabs/aws-java-nio-spi-for-s3",
     "buildTool": "gradle",
     "libraryDependencies": [
