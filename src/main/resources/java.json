@@ -1,5 +1,21 @@
 [
   {
+    "github": "crawler-commons/crawler-commons",
+    "buildTool": "maven",
+    "targetClasses": [
+      "crawlercommons.sitemaps.SiteMapIndex",
+      "crawlercommons.sitemaps.extension.PageMap",
+      "crawlercommons.sitemaps.extension.MobileAttributes",
+      "crawlercommons.sitemaps.extension.LinkAttributes"
+    ],
+    "targetTests": [
+      "crawlercommons.sitemaps.SiteMapIndexTest",
+      "crawlercommons.sitemaps.extension.PageMapsTest",
+      "crawlercommons.sitemaps.extension.MobileAttributesTest",
+      "crawlercommons.sitemaps.extension.LinkAttributesTest"
+    ]
+  },
+  {
     "github": "bhlangonijr/chesslib",
     "libraryDependencies": [
       "https://repo1.maven.org/maven2/org/apache/commons/commons-lang3/3.17.0/commons-lang3-3.17.0.jar"

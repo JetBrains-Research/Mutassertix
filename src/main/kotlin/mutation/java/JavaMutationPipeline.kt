@@ -28,8 +28,6 @@ class JavaMutationPipeline : MutationPipeline {
         // Remove report folder
         File(projectConfiguration.sourceDir + "/pitest").deleteRecursively()
 
-        println("> Collecting mutation score $mutationScore")
-
         return mutationScore
     }
 }

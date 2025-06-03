@@ -1,7 +1,7 @@
 import ai.Agent
 import java.io.File
-import languages.LanguageConfig
 import languages.Java
+import languages.LanguageConfig
 import org.jetbrains.research.mutassertix.agent.AgentUtils
 
 /**
@@ -12,9 +12,9 @@ fun main() {
 
     val projectConfigurations = languageConfig.datasetManager.setUpProjects(languageConfig)
 
-    val reportFile = File("report.txt").bufferedWriter()
-
-    reportFile.write("Project\tLLM Model\tInitial Mutation Score\tFinal Mutation Score\tScore Improvement\n")
+    val reportFileName = "report.txt"
+    val reportFileBufferedWriter = File(reportFileName).bufferedWriter()
+    reportFileBufferedWriter.write("Project\tLLM Model\tInitial Mutation Score\tFinal Mutation Score\tScore Improvement\n")
 
     val numberOfRepeats = 3
 
@@ -43,12 +43,14 @@ fun main() {
                 val finalMutationScore = languageConfig.mutationPipeline.getMutationScore(projectConfiguration)
 
                 // Write report
-                reportFile.write(
+                reportFileBufferedWriter.write(
                     "${projectConfiguration.projectName}\t${llmModel.id}\t$initialMutationScore\t" +
                             "$finalMutationScore\t${finalMutationScore - initialMutationScore}\n"
                 )
+
+                return
             }
         }
     }
-    reportFile.close()
+    reportFileBufferedWriter.close()
 }

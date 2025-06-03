@@ -94,8 +94,6 @@ class JavaDatasetManager : DatasetManager() {
             e.message ?: "Unknown error"
         }
 
-        println("> Build result: $result")
-
         return result
     }
 
