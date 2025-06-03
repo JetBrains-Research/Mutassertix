@@ -10,22 +10,22 @@ import ai.koog.agents.core.tools.ToolRegistry
 import ai.koog.agents.core.tools.reflect.asTools
 import ai.koog.agents.local.features.eventHandler.feature.handleEvents
 import ai.koog.prompt.dsl.prompt
-import ai.koog.prompt.executor.clients.openai.OpenAIModels
-import ai.koog.prompt.executor.llms.all.simpleOpenAIExecutor
-import ai.koog.prompt.executor.model.PromptExecutor
-import data.ConfigReader
+import ai.koog.prompt.llm.LLModel
+import data.PropertiesReader
 import data.ProjectConfiguration
 import dataset.DatasetManager
 import kotlinx.coroutines.runBlocking
 import mutation.MutationPipeline
+import org.jetbrains.research.mutassertix.agent.AgentUtils
 
 object Agent {
     fun run(
+        llmModel: LLModel,
         projectConfiguration: ProjectConfiguration,
         datasetManager: DatasetManager,
         mutationPipeline: MutationPipeline
-    ) = runBlocking {
-        val executor: PromptExecutor = simpleOpenAIExecutor(ConfigReader().openAIToken)
+    ) {
+        val executor = AgentUtils.getExecutor(PropertiesReader.grazieToken)
 
         val toolRegistry = ToolRegistry {
             tools(Tools(projectConfiguration, datasetManager, mutationPipeline).asTools())
@@ -71,7 +71,7 @@ object Agent {
                 """.trimIndent()
                 )
             },
-            model = OpenAIModels.Chat.GPT4o,
+            model = llmModel,
             maxAgentIterations = 1000
         )
 

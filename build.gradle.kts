@@ -6,8 +6,24 @@ plugins {
 group = "org.example"
 version = "1.0-SNAPSHOT"
 
-repositories {
-    mavenCentral()
+allprojects {
+    repositories {
+        mavenCentral()
+        maven(url = "https://packages.jetbrains.team/maven/p/grazi/grazie-platform-public")
+
+        maven {
+            val spaceUsername =
+                System.getProperty("space.username") ?: project.properties["spaceUsername"]?.toString() ?: ""
+            val spacePassword =
+                System.getProperty("space.pass") ?: project.properties["spacePassword"]?.toString() ?: ""
+
+            url = uri("https://packages.jetbrains.team/maven/p/testing-agents/assertion-generation-agent")
+            credentials {
+                username = spaceUsername
+                password = spacePassword
+            }
+        }
+    }
 }
 
 dependencies {
@@ -16,6 +32,8 @@ dependencies {
 
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.1")
     implementation(kotlin("stdlib-jdk8"))
+
+    implementation("org.jetbrains.research:assertion-generation-agent:1.0.1")
 
     implementation("ai.koog:koog-agents:0.1.0")
 

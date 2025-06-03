@@ -21,10 +21,24 @@ abstract class DatasetManager {
     /**
      * Builds the project specified in the given ProjectConfiguration instance.
      *
-     * @param projectConfiguration Configuration settings for the project to be rebuilt
+     * @param projectConfiguration CConfiguration settings specific to the project.
      * @return Building result
      */
     abstract fun projectBuild(projectConfiguration: ProjectConfiguration): String
+
+    /**
+     * Resets the project state to its initial configuration before running any operations
+     * or transformations in the pipeline.
+     *
+     * @param projectConfiguration Configuration settings specific to the project.
+     */
+    fun resetProject(projectConfiguration: ProjectConfiguration) {
+        val targetDir = "${projectsDir.path}/${projectConfiguration.projectName}"
+
+        File(targetDir).deleteRecursively()
+
+        cloneProject(projectConfiguration.github)
+    }
 
     /**
      * Clones a project repository from the given GitHub URL.

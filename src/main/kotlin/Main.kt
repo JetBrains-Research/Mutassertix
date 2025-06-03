@@ -1,8 +1,8 @@
 import ai.Agent
+import java.io.File
 import languages.LanguageConfig
-import data.Report
 import languages.Java
-import utils.ReportPrinter
+import org.jetbrains.research.mutassertix.agent.AgentUtils
 
 /**
  * Main pipeline implementation
@@ -12,27 +12,43 @@ fun main() {
 
     val projectConfigurations = languageConfig.datasetManager.setUpProjects(languageConfig)
 
-    val reports = mutableListOf<Report>()
+    val reportFile = File("report.txt").bufferedWriter()
 
-    for (projectConfiguration in projectConfigurations) {
-        println("> Running the pipeline for project ${projectConfiguration.projectName}")
+    reportFile.write("Project\tLLM Model\tInitial Mutation Score\tFinal Mutation Score\tScore Improvement\n")
 
-        languageConfig.datasetManager.projectBuild(projectConfiguration)
-        val initialMutationScore = languageConfig.mutationPipeline.getMutationScore(projectConfiguration)
+    val numberOfRepeats = 3
 
-        Agent.run(projectConfiguration, languageConfig.datasetManager, languageConfig.mutationPipeline)
+    for (llmModel in AgentUtils.getLLModels()) {
+        for (projectConfiguration in projectConfigurations) {
+            repeat(numberOfRepeats) {
+                println("> Running the pipeline for project ${projectConfiguration.projectName}")
 
-        languageConfig.datasetManager.projectBuild(projectConfiguration)
-        val finalMutationScore = languageConfig.mutationPipeline.getMutationScore(projectConfiguration)
+                // Reset project
+                languageConfig.datasetManager.resetProject(projectConfiguration)
 
-        reports.add(
-            Report(
-                projectConfiguration.projectName,
-                initialMutationScore,
-                finalMutationScore,
-                finalMutationScore - initialMutationScore
-            )
-        )
+                // Calculate initial mutation score
+                languageConfig.datasetManager.projectBuild(projectConfiguration)
+                val initialMutationScore = languageConfig.mutationPipeline.getMutationScore(projectConfiguration)
+
+                // Run Assertion Generation Agent
+                Agent.run(
+                    llmModel,
+                    projectConfiguration,
+                    languageConfig.datasetManager,
+                    languageConfig.mutationPipeline
+                )
+
+                // Calculate final mutation score
+                languageConfig.datasetManager.projectBuild(projectConfiguration)
+                val finalMutationScore = languageConfig.mutationPipeline.getMutationScore(projectConfiguration)
+
+                // Write report
+                reportFile.write(
+                    "${projectConfiguration.projectName}\t${llmModel.id}\t$initialMutationScore\t" +
+                            "$finalMutationScore\t${finalMutationScore - initialMutationScore}\n"
+                )
+            }
+        }
     }
-    ReportPrinter.print(reports)
+    reportFile.close()
 }

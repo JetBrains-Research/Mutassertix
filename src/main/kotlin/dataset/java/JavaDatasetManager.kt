@@ -1,6 +1,6 @@
 package dataset.java
 
-import data.ConfigReader
+import data.PropertiesReader
 import data.ProjectConfiguration
 import dataset.DatasetManager
 import java.io.File
@@ -36,10 +36,11 @@ class JavaDatasetManager : DatasetManager() {
 
             val projectConfiguration = ProjectConfiguration(
                 projectName = sourceDir.split("/").last(),
+                github = github,
                 language = languageConfig.name,
                 sourceDir = sourceDir,
                 buildTool = buildTool,
-                languagePath = ConfigReader().javaPath,
+                languagePath = PropertiesReader.javaPath,
                 libraryDependencies = projectJson.jsonObject["libraryDependencies"]?.jsonArray?.map {
                     it.jsonPrimitive.content
                 } ?: emptyList(),
