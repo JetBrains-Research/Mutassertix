@@ -46,6 +46,18 @@
     ]
   },
   {
+    "github": "revelc/formatter-maven-plugin",
+    "buildTool": "maven",
+    "targetClasses": [
+      "net.revelc.code.formatter.TimeUtil",
+      "net.revelc.code.formatter.LineEnding"
+    ],
+    "targetTests": [
+      "net.revelc.code.formatter.TimeUtilTest",
+      "net.revelc.code.formatter.LineEndingTest"
+    ]
+  },
+  {
     "github": "awslabs/aws-java-nio-spi-for-s3",
     "buildTool": "gradle",
     "libraryDependencies": [
