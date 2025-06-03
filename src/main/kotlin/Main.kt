@@ -47,8 +47,6 @@ fun main() {
                     "${projectConfiguration.projectName}\t${llmModel.id}\t$initialMutationScore\t" +
                             "$finalMutationScore\t${finalMutationScore - initialMutationScore}\n"
                 )
-
-                return
             }
         }
     }

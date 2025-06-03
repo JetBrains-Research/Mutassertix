@@ -83,7 +83,7 @@ object Agent {
         ) {
             handleEvents {
                 onToolCall = { tool: Tool<*, *>, toolArgs: Tool.Args ->
-                    println("> Agent: Tool called - tool ${tool.name}")
+                    println("> Agent: tool called - tool ${tool.name}, args - $toolArgs")
                 }
 
                 onAgentRunError = { _: String, throwable: Throwable ->
@@ -91,7 +91,7 @@ object Agent {
                 }
 
                 onAgentFinished = { _: String, result: String? ->
-                    println("> Agent: Result - $result")
+                    println("> Agent: result - $result")
                 }
             }
         }

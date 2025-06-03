@@ -1,5 +1,15 @@
 [
   {
+    "github": "davidmoten/word-wrap",
+    "buildTool": "maven",
+    "targetClasses": [
+      "org.davidmoten.text.utils.StringBuilder2"
+    ],
+    "targetTests": [
+      "org.davidmoten.text.utils.StringBuilder2Test"
+    ]
+  },
+  {
     "github": "crawler-commons/crawler-commons",
     "buildTool": "maven",
     "targetClasses": [
