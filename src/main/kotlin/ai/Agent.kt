@@ -62,12 +62,13 @@ object Agent {
 
                     2. Enhancement
                        - Generate new assertions for the test file.
+                       - Write new assertions to the test file.
 
                     3. Validation
                        - Build project. Fix errors if any. After 3 unsuccessful attempts reset the test file and proceed to next file.
                        - Calculate new mutation score.
-                       - If score improves: proceed to next file.
-                       - If no improvement: retry with different strategy. After 3 unsuccessful attempts proceed to next file.
+                       - If score is 100: proceed to next file.
+                       - After 3 attempts proceed to next file.
                 """.trimIndent()
                 )
             },

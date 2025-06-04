@@ -32,13 +32,11 @@
     ],
     "buildTool": "maven",
     "targetClasses": [
-      "com.github.bhlangonijr.chesslib.move.MoveList",
       "com.github.bhlangonijr.chesslib.PieceType",
       "com.github.bhlangonijr.chesslib.unicode.UnicodePrinter",
       "com.github.bhlangonijr.chesslib.PieceType"
     ],
     "targetTests": [
-      "com.github.bhlangonijr.chesslib.move.MoveListTest",
       "com.github.bhlangonijr.chesslib.PieceTypeTest",
       "com.github.bhlangonijr.chesslib.unicode.UnicodePrinterTest",
       "com.github.bhlangonijr.chesslib.PieceTest",
