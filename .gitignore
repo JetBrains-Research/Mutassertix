@@ -4,5 +4,6 @@
 build/
 
 projects/
+cache/
 
 report.txt

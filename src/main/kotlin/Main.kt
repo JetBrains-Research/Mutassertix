@@ -3,6 +3,7 @@ import java.io.File
 import languages.Java
 import languages.LanguageConfig
 import org.jetbrains.research.mutassertix.agent.AgentUtils
+import utils.CacheUtils
 
 /**
  * Main pipeline implementation
@@ -12,15 +13,14 @@ fun main() {
 
     val projectConfigurations = languageConfig.datasetManager.setUpProjects(languageConfig)
 
+    // Prepare a report file
     val reportFileName = "report.txt"
     val reportFileBufferedWriter = File(reportFileName).bufferedWriter()
     reportFileBufferedWriter.write("Project\tLLM Model\tInitial Mutation Score\tFinal Mutation Score\tScore Improvement\n")
 
-    val numberOfRepeats = 3
-
     for (llmModel in AgentUtils.getLLModels()) {
         for (projectConfiguration in projectConfigurations) {
-            repeat(numberOfRepeats) {
+            for(index in 0 until 3) {
                 println("> Running the pipeline for project ${projectConfiguration.projectName}")
 
                 // Reset project
@@ -47,6 +47,9 @@ fun main() {
                     "${projectConfiguration.projectName}\t${llmModel.id}\t$initialMutationScore\t" +
                             "$finalMutationScore\t${finalMutationScore - initialMutationScore}\n"
                 )
+
+                // Cache data
+                CacheUtils.cacheData(projectConfiguration.projectName, index, llmModel.id)
             }
         }
     }

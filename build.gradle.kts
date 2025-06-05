@@ -35,7 +35,7 @@ dependencies {
 
     implementation("org.jetbrains.research:assertion-generation-agent:1.0.2")
 
-    implementation("ai.koog:koog-agents:0.1.0")
+    implementation("ai.koog:koog-agents:0.2.0")
 
     // Pitest dependencies
     testImplementation("org.hamcrest:hamcrest:3.0")
