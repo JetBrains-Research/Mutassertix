@@ -33,7 +33,7 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.1")
     implementation(kotlin("stdlib-jdk8"))
 
-    implementation("org.jetbrains.research:assertion-generation-agent:1.0.1")
+    implementation("org.jetbrains.research:assertion-generation-agent:1.0.2")
 
     implementation("ai.koog:koog-agents:0.1.0")
 
