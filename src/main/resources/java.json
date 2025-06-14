@@ -33,14 +33,11 @@
     "buildTool": "maven",
     "targetClasses": [
       "com.github.bhlangonijr.chesslib.PieceType",
-      "com.github.bhlangonijr.chesslib.unicode.UnicodePrinter",
-      "com.github.bhlangonijr.chesslib.PieceType"
+      "com.github.bhlangonijr.chesslib.unicode.UnicodePrinter"
     ],
     "targetTests": [
       "com.github.bhlangonijr.chesslib.PieceTypeTest",
-      "com.github.bhlangonijr.chesslib.unicode.UnicodePrinterTest",
-      "com.github.bhlangonijr.chesslib.PieceTest",
-      "com.github.bhlangonijr.chesslib.PieceTypeTest"
+      "com.github.bhlangonijr.chesslib.unicode.UnicodePrinterTest"
     ]
   },
   {
@@ -178,7 +175,6 @@
       "software.amazon.event.ruler.Path",
       "software.amazon.event.ruler.Patterns",
       "software.amazon.event.ruler.ArrayMembership",
-      "software.amazon.event.ruler.ComparableNumber",
       "software.amazon.event.ruler.NameStateWithPattern",
       "software.amazon.event.ruler.CompositeByteTransition"
     ],
@@ -186,7 +182,6 @@
       "software.amazon.event.ruler.PathTest",
       "software.amazon.event.ruler.PatternsTest",
       "software.amazon.event.ruler.ArrayMembershipTest",
-      "software.amazon.event.ruler.ComparableNumberTest",
       "software.amazon.event.ruler.NameStateWithPatternTest",
       "software.amazon.event.ruler.CompositeByteTransitionTest"
     ]

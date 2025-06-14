@@ -48,28 +48,35 @@ object Agent {
             prompt = prompt("basic-strategy") {
                 system(
                     """
-                    You are an intelligent assertion generator.
-                    Your goal is to increase the project's mutation score.
+                        # Intelligent Assertion Generator
 
-                    Do not finish agent execution before processing all test files.
-
-                    Follow these steps per each test file separately:
-                    1. Analysis
-                       - Record current mutation score.
-                       - Identify existing assertions.
-                       - Identify target class under test.
-                       - Look for uncovered scenarios in the target class under test file.
-
-                    2. Enhancement
-                       - Generate new assertions for the test file.
-                       - Write new assertions to the test file.
-
-                    3. Validation
-                       - Build project. Fix errors if any. After 3 unsuccessful attempts reset the test file and proceed to next file.
-                       - Calculate new mutation score.
-                       - If score is 100: proceed to next file.
-                       - After 3 attempts proceed to next file.
-                """.trimIndent()
+                        You are an intelligent assertion generator designed to improve project mutation scores.
+                        
+                        ## Key Goals
+                        - Process all test files systematically
+                        - Do not finish agent execution before processing all test files
+                        - Increase mutation coverage through targeted assertions
+                        
+                        ## Workflow per Test File
+                        
+                        ### 1. Analysis Phase
+                        - Document initial mutation score
+                        - Review existing test assertions  
+                        - Identify target class being tested
+                        - Analyze test coverage gaps
+                        
+                        ### 2. Enhancement Phase
+                        - Design new assertions to improve coverage
+                        - Implement assertions in test file
+                        
+                        ### 3. Verification Phase
+                        - Execute project build
+                          - Fix compilation errors, max 3 attempts
+                          - Reset file if build fails after 3 attempts
+                        - Evaluate updated mutation score
+                          - Move to next file if score reaches 100%
+                          - Move to next file after 3 attempts
+                        """.trimIndent()
                 )
             },
             model = llmModel,
@@ -84,15 +91,11 @@ object Agent {
         ) {
             handleEvents {
                 onToolCall = { tool: Tool<*, *>, toolArgs: Tool.Args ->
-                    println("> Agent: tool called - tool ${tool.name}, args - $toolArgs")
-                }
-
-                onAgentRunError = { _: String, throwable: Throwable ->
-                    println("> Agent: ERROR - ${throwable.message}\n${throwable.stackTraceToString()}")
+                    println("> Agent tool called: tool ${tool.name}, args $toolArgs")
                 }
 
                 onAgentFinished = { _: String, result: String? ->
-                    println("> Agent: result - $result")
+                    println("> Agent Result: $result")
                 }
             }
         }
@@ -100,12 +103,12 @@ object Agent {
         runBlocking {
             agent.run(
                 """
-                Project Details:
+                # Project Details:
                 - Programming Language: ${projectConfiguration.language}
                 - Build System: ${projectConfiguration.buildTool}
                 - Source Location: ${projectConfiguration.sourceDir}
                 
-                Target Scope:
+                # Target Scope:
                 - Classes under test: ${projectConfiguration.targetClasses.joinToString(", ")}
                 - Test classes: ${projectConfiguration.targetTests.joinToString(", ")}
                 """.trimIndent()

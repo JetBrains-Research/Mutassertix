@@ -15,12 +15,13 @@ fun main() {
 
     // Prepare a report file
     val reportFileName = "report.txt"
+    if (File(reportFileName).exists()) File(reportFileName).delete()
     val reportFileBufferedWriter = File(reportFileName).bufferedWriter()
     reportFileBufferedWriter.write("Project\tLLM Model\tInitial Mutation Score\tFinal Mutation Score\tScore Improvement\n")
 
     for (llmModel in AgentUtils.getLLModels()) {
         for (projectConfiguration in projectConfigurations) {
-            for(index in 0 until 3) {
+            for (index in 0 until 5) {
                 println("> Running the pipeline for project ${projectConfiguration.projectName}")
 
                 // Reset project
@@ -43,10 +44,10 @@ fun main() {
                 val finalMutationScore = languageConfig.mutationPipeline.getMutationScore(projectConfiguration)
 
                 // Write report
-                reportFileBufferedWriter.write(
-                    "${projectConfiguration.projectName}\t${llmModel.id}\t$initialMutationScore\t" +
-                            "$finalMutationScore\t${finalMutationScore - initialMutationScore}\n"
-                )
+                val reportLine = "${projectConfiguration.projectName}\t${llmModel.id}\t$initialMutationScore\t" +
+                        "$finalMutationScore\t${finalMutationScore - initialMutationScore}\n"
+                reportFileBufferedWriter.write(reportLine)
+                println("> Report line: $reportLine")
 
                 // Cache data
                 CacheUtils.cacheData(projectConfiguration.projectName, index, llmModel.id)
