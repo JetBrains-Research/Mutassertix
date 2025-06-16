@@ -6,8 +6,24 @@ plugins {
 group = "org.example"
 version = "1.0-SNAPSHOT"
 
-repositories {
-    mavenCentral()
+allprojects {
+    repositories {
+        mavenCentral()
+        maven(url = "https://packages.jetbrains.team/maven/p/grazi/grazie-platform-public")
+
+        maven {
+            val spaceUsername =
+                System.getProperty("space.username") ?: project.properties["spaceUsername"]?.toString() ?: ""
+            val spacePassword =
+                System.getProperty("space.pass") ?: project.properties["spacePassword"]?.toString() ?: ""
+
+            url = uri("https://packages.jetbrains.team/maven/p/testing-agents/assertion-generation-agent")
+            credentials {
+                username = spaceUsername
+                password = spacePassword
+            }
+        }
+    }
 }
 
 dependencies {
@@ -17,8 +33,15 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.1")
     implementation(kotlin("stdlib-jdk8"))
 
+    implementation("org.jetbrains.research:assertion-generation-agent:1.0.9")
+
+    implementation("ai.koog:koog-agents:0.1.0")
+
     // Pitest dependencies
     testImplementation("org.hamcrest:hamcrest:3.0")
+    implementation("org.testng:testng:7.11.0")
+    implementation("org.mockito:mockito-core:5.18.0")
+    implementation("org.mockito:mockito-junit-jupiter:5.18.0")
     implementation("org.pitest:pitest-command-line:1.19.1")
     implementation("org.pitest:pitest-entry:1.19.1")
     implementation("org.pitest:pitest:1.19.1")

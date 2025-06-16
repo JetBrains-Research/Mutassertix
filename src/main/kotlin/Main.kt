@@ -1,81 +1,58 @@
-import data.Report
-import datasetUtils.DatasetManager
-import datasetUtils.java.JavaDatasetManager
-import mutation.MutationPipeline
-import mutation.java.JavaMutationPipeline
+import ai.Agent
+import java.io.File
+import languages.Java
+import languages.LanguageConfig
+import org.jetbrains.research.mutassertix.agent.AgentUtils
+import utils.CacheUtils
 
 /**
  * Main pipeline implementation
  */
 fun main() {
-    val datasetManager: DatasetManager = JavaDatasetManager()
-    val mutationPipeline: MutationPipeline = JavaMutationPipeline()
+    val languageConfig: LanguageConfig = Java()
 
-    val projectConfigurations = datasetManager.setUpProjects("src/main/resources/java.json")
+    val projectConfigurations = languageConfig.datasetManager.setUpProjects(languageConfig)
 
-    val reports = mutableListOf<Report>()
+    // Prepare a report file
+    val reportFileName = "report.txt"
+    if (File(reportFileName).exists()) File(reportFileName).delete()
+    val reportFileBufferedWriter = File(reportFileName).bufferedWriter()
+    reportFileBufferedWriter.write("Project\tLLM Model\tInitial Mutation Score\tFinal Mutation Score\tScore Improvement\n")
 
-    for (projectConfiguration in projectConfigurations) {
-        val projectName = projectConfiguration.sourceDir.split("/").last()
-        println("> Running the pipeline for project \"$projectName\"")
+    for (llmModel in AgentUtils.getLLModels()) {
+        for (projectConfiguration in projectConfigurations) {
+            for (index in 0 until 5) {
+                println("> Running the pipeline for project ${projectConfiguration.projectName}")
 
-        println("> Running first mutation process")
-        val initialMutationScore = mutationPipeline.getMutationScore(projectConfiguration)
+                // Reset project
+                languageConfig.datasetManager.resetProject(projectConfiguration)
 
-        println("> Running AI assertion generation process")
-        // TODO AI implementation
+                // Calculate initial mutation score
+                languageConfig.datasetManager.projectBuild(projectConfiguration)
+                val initialMutationScore = languageConfig.mutationPipeline.getMutationScore(projectConfiguration)
 
-        println("> Rebuilding project")
-        datasetManager.projectBuild(projectConfiguration)
+                // Run Assertion Generation Agent
+                Agent.run(
+                    llmModel,
+                    projectConfiguration,
+                    languageConfig.datasetManager,
+                    languageConfig.mutationPipeline
+                )
 
-        println("> Running second mutation process")
-        val finalMutationScore = mutationPipeline.getMutationScore(projectConfiguration)
+                // Calculate final mutation score
+                languageConfig.datasetManager.projectBuild(projectConfiguration)
+                val finalMutationScore = languageConfig.mutationPipeline.getMutationScore(projectConfiguration)
 
-        reports.add(
-            Report(
-                projectName,
-                initialMutationScore,
-                finalMutationScore,
-                finalMutationScore - initialMutationScore
-            )
-        )
+                // Write report
+                val reportLine = "${projectConfiguration.projectName}\t${llmModel.id}\t$initialMutationScore\t" +
+                        "$finalMutationScore\t${finalMutationScore - initialMutationScore}\n"
+                reportFileBufferedWriter.write(reportLine)
+                println("> Report line: $reportLine")
+
+                // Cache data
+                CacheUtils.cacheData(projectConfiguration.projectName, index, llmModel.id)
+            }
+        }
     }
-    reportsOutput(reports)
-}
-
-/**
- * Displays a formatted output of mutation testing reports
- */
-fun reportsOutput(report: MutableList<Report>) {
-    // Define column headers and widths
-    println("\nResults:")
-    val format = "| %-25s | %15s | %15s | %15s |"
-    val separator = "-".repeat(83)
-
-    // Print header
-    println(separator)
-    println(
-        String.format(
-            format,
-            "Project",
-            "Initial Score",
-            "Final Score",
-            "Difference"
-        )
-    )
-    println(separator)
-
-    // Print each report row
-    report.forEach { r ->
-        println(
-            String.format(
-                format,
-                r.projectName,
-                r.initialMutationScore.toString(),
-                r.finalMutationScore.toString(),
-                r.difference.toString()
-            )
-        )
-    }
-    println(separator)
+    reportFileBufferedWriter.close()
 }

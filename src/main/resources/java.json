@@ -1,24 +1,153 @@
 [
   {
-    "github": "c-rack/cbor-java",
+    "github": "davidmoten/word-wrap",
     "buildTool": "maven",
-    "languagePath": ADD_YOUR_LOCAL_PATH_TO_JAVA_17_HERE,
     "targetClasses": [
-      "co.nstant.in.cbor.CborBuilder",
-      "co.nstant.in.cbor.CborDecoder",
-      "co.nstant.in.cbor.CborEncoder"
+      "org.davidmoten.text.utils.StringBuilder2"
     ],
     "targetTests": [
-      "co.nstant.in.cbor.CborBuilderTest",
-      "co.nstant.in.cbor.builder.MapBuilderTest",
-      "co.nstant.in.cbor.decoder.CborDecoderTest",
-      "co.nstant.in.cbor.encoder.MapEncoderTest"
+      "org.davidmoten.text.utils.StringBuilder2Test"
+    ]
+  },
+  {
+    "github": "crawler-commons/crawler-commons",
+    "buildTool": "maven",
+    "targetClasses": [
+      "crawlercommons.sitemaps.SiteMapIndex",
+      "crawlercommons.sitemaps.extension.PageMap",
+      "crawlercommons.sitemaps.extension.MobileAttributes",
+      "crawlercommons.sitemaps.extension.LinkAttributes"
+    ],
+    "targetTests": [
+      "crawlercommons.sitemaps.SiteMapIndexTest",
+      "crawlercommons.sitemaps.extension.PageMapsTest",
+      "crawlercommons.sitemaps.extension.MobileAttributesTest",
+      "crawlercommons.sitemaps.extension.LinkAttributesTest"
+    ]
+  },
+  {
+    "github": "bhlangonijr/chesslib",
+    "libraryDependencies": [
+      "https://repo1.maven.org/maven2/org/apache/commons/commons-lang3/3.17.0/commons-lang3-3.17.0.jar"
+    ],
+    "buildTool": "maven",
+    "targetClasses": [
+      "com.github.bhlangonijr.chesslib.PieceType",
+      "com.github.bhlangonijr.chesslib.unicode.UnicodePrinter"
+    ],
+    "targetTests": [
+      "com.github.bhlangonijr.chesslib.PieceTypeTest",
+      "com.github.bhlangonijr.chesslib.unicode.UnicodePrinterTest"
+    ]
+  },
+  {
+    "github": "revelc/formatter-maven-plugin",
+    "buildTool": "maven",
+    "targetClasses": [
+      "net.revelc.code.formatter.TimeUtil",
+      "net.revelc.code.formatter.LineEnding"
+    ],
+    "targetTests": [
+      "net.revelc.code.formatter.TimeUtilTest",
+      "net.revelc.code.formatter.LineEndingTest"
+    ]
+  },
+  {
+    "github": "awslabs/aws-java-nio-spi-for-s3",
+    "buildTool": "gradle",
+    "libraryDependencies": [
+      "https://repo1.maven.org/maven2/software/amazon/awssdk/s3/2.31.51/s3-2.31.51.jar",
+      "https://repo1.maven.org/maven2/software/amazon/awssdk/aws-core/2.31.9/aws-core-2.31.9.jar",
+      "https://repo1.maven.org/maven2/org/assertj/assertj-core/3.27.3/assertj-core-3.27.3.jar",
+      "https://repo1.maven.org/maven2/software/amazon/awssdk/sdk-core/2.31.51/sdk-core-2.31.51.jar",
+      "https://repo1.maven.org/maven2/net/bytebuddy/byte-buddy/1.17.5/byte-buddy-1.17.5.jar",
+      "https://repo1.maven.org/maven2/net/bytebuddy/byte-buddy-agent/1.17.5/byte-buddy-agent-1.17.5.jar",
+      "https://repo1.maven.org/maven2/org/objenesis/objenesis/3.4/objenesis-3.4.jar",
+      "https://repo1.maven.org/maven2/org/slf4j/slf4j-api/2.0.17/slf4j-api-2.0.17.jar",
+      "https://repo1.maven.org/maven2/software/amazon/awssdk/utils/2.31.51/utils-2.31.51.jar",
+      "https://repo1.maven.org/maven2/software/amazon/awssdk/crt/aws-crt/0.38.3/aws-crt-0.38.3.jar",
+      "https://repo1.maven.org/maven2/software/amazon/awssdk/http-client-spi/2.31.51/http-client-spi-2.31.51.jar"
+    ],
+    "targetClasses": [
+      "software.amazon.nio.spi.s3.util.S3XFileSystemInfo",
+      "software.amazon.nio.spi.s3.Crc32cFileIntegrityCheck",
+      "software.amazon.nio.spi.s3.PosixLikePathRepresentation",
+      "software.amazon.nio.spi.s3.S3OpenOption"
+    ],
+    "targetTests": [
+      "software.amazon.nio.spi.s3.util.S3XFileSystemInfoTest",
+      "software.amazon.nio.spi.s3.Crc32cFileIntegrityCheckTest",
+      "software.amazon.nio.spi.s3.PosixLikePathRepresentationTest",
+      "software.amazon.nio.spi.s3.S3OpenOptionTest"
+    ]
+  },
+  {
+    "github": "LMAX-Exchange/Simple-DSL",
+    "buildTool": "gradle",
+    "targetClasses": [
+      "com.lmax.simpledsl.internal.RepeatingParamValues",
+      "com.lmax.simpledsl.internal.SimpleDslParam",
+      "com.lmax.simpledsl.internal.NameValuePair"
+    ],
+    "targetTests": [
+      "com.lmax.simpledsl.internal.RepeatingParamValuesTest",
+      "com.lmax.simpledsl.internal.SimpleDslParamTest",
+      "com.lmax.simpledsl.internal.NameValuePairTest"
+    ]
+  },
+  {
+    "github": "BrightSpots/rcv",
+    "buildTool": "gradle",
+    "libraryDependencies": [
+      "https://repo1.maven.org/maven2/com/squareup/retrofit2/converter-jackson/3.0.0/converter-jackson-3.0.0.jar",
+      "https://repo1.maven.org/maven2/com/fasterxml/jackson/core/jackson-annotations/2.19.0/jackson-annotations-2.19.0.jar",
+      "https://repo1.maven.org/maven2/com/fasterxml/jackson/core/jackson-core/2.19.0/jackson-core-2.19.0.jar",
+      "https://repo1.maven.org/maven2/com/fasterxml/jackson/core/jackson-databind/2.19.0/jackson-databind-2.19.0.jar",
+      "https://repo1.maven.org/maven2/org/openjfx/javafx-graphics/24.0.1/javafx-graphics-24.0.1-mac-aarch64.jar",
+      "https://repo1.maven.org/maven2/org/openjfx/javafx-graphics/24.0.1/javafx-graphics-24.0.1.jar",
+      "https://repo1.maven.org/maven2/org/openjfx/javafx-fxml/24.0.1/javafx-fxml-24.0.1-mac-aarch64.jar",
+      "https://repo1.maven.org/maven2/org/openjfx/javafx-controls/24.0.1/javafx-controls-24.0.1-mac-aarch64.jar",
+      "https://repo1.maven.org/maven2/org/openjfx/javafx-controls/24.0.1/javafx-controls-24.0.1.jar",
+      "https://repo1.maven.org/maven2/org/openjfx/javafx-base/24.0.1/javafx-base-24.0.1-mac-aarch64.jar",
+      "https://repo1.maven.org/maven2/org/openjfx/javafx-base/24.0.1/javafx-base-24.0.1.jar"
+    ],
+    "targetClasses": [
+      "network.brightspots.rcv.ContestConfigMigration"
+    ],
+    "targetTests": [
+      "network.brightspots.rcv.ContestConfigTests"
+    ]
+  },
+  {
+    "github": "Bindambc/whatsapp-business-java-api",
+    "buildTool": "maven",
+    "libraryDependencies": [
+      "https://repo1.maven.org/maven2/com/squareup/okhttp3/okhttp/5.0.0-alpha.14/okhttp-5.0.0-alpha.14.jar",
+      "https://repo1.maven.org/maven2/com/squareup/retrofit2/retrofit/3.0.0/retrofit-3.0.0.jar",
+      "https://repo1.maven.org/maven2/com/squareup/retrofit2/converter-jackson/3.0.0/converter-jackson-3.0.0.jar",
+      "https://repo1.maven.org/maven2/com/fasterxml/jackson/core/jackson-annotations/2.19.0/jackson-annotations-2.19.0.jar",
+      "https://repo1.maven.org/maven2/com/fasterxml/jackson/core/jackson-core/2.19.0/jackson-core-2.19.0.jar",
+      "https://repo1.maven.org/maven2/com/fasterxml/jackson/core/jackson-databind/2.19.0/jackson-databind-2.19.0.jar",
+      "https://repo1.maven.org/maven2/com/squareup/okio/okio-jvm/3.9.1/okio-jvm-3.9.1.jar",
+      "https://repo1.maven.org/maven2/com/squareup/okhttp3/mockwebserver3/5.0.0-alpha.14/mockwebserver3-5.0.0-alpha.14.jar"
+    ],
+    "targetClasses": [
+      "com.whatsapp.api.WhatsappApiFactory",
+      "com.whatsapp.api.WhatsappApiServiceGenerator",
+      "com.whatsapp.api.service.WhatsappBusinessManagementApiService",
+      "com.whatsapp.api.domain.messages.Message",
+      "com.whatsapp.api.domain.webhook.WebHook"
+    ],
+    "targetTests": [
+      "com.whatsapp.api.WhatsappApiFactoryTest",
+      "com.whatsapp.api.domain.messages.MessageTest",
+      "com.whatsapp.api.WhatsappApiServiceGeneratorTest",
+      "com.whatsapp.api.domain.webhook.WebHookPayloadTest"
     ]
   },
   {
     "github": "wmixvideo/nfe",
     "buildTool": "maven",
-    "languagePath": ADD_YOUR_LOCAL_PATH_TO_JAVA_17_HERE,
     "targetClasses": [
       "com.fincatto.documentofiscal.DFAmbiente",
       "com.fincatto.documentofiscal.utils.DFUtils",
@@ -33,24 +162,28 @@
     ]
   },
   {
-    "github": "lightsail-network/java-stellar-sdk",
-    "buildTool": "gradle",
-    "languagePath": ADD_YOUR_LOCAL_PATH_TO_JAVA_17_HERE,
+    "github": "aws/event-ruler",
+    "buildTool": "maven",
     "libraryDependencies": [
-      "https://repo1.maven.org/maven2/commons-codec/commons-codec/1.18.0/commons-codec-1.18.0.jar",
-      "https://repo1.maven.org/maven2/org/bouncycastle/bcprov-jdk18on/1.79/bcprov-jdk18on-1.79.jar"
+      "https://repo1.maven.org/maven2/com/squareup/retrofit2/converter-jackson/3.0.0/converter-jackson-3.0.0.jar",
+      "https://repo1.maven.org/maven2/com/fasterxml/jackson/core/jackson-annotations/2.19.0/jackson-annotations-2.19.0.jar",
+      "https://repo1.maven.org/maven2/com/fasterxml/jackson/core/jackson-core/2.19.0/jackson-core-2.19.0.jar",
+      "https://repo1.maven.org/maven2/com/fasterxml/jackson/core/jackson-databind/2.19.0/jackson-databind-2.19.0.jar",
+      "https://repo1.maven.org/maven2/ch/randelshofer/fastdoubleparser/2.0.1/fastdoubleparser-2.0.1.jar"
     ],
     "targetClasses": [
-      "org.stellar.sdk.Address",
-      "org.stellar.sdk.Asset",
-      "org.stellar.sdk.KeyPair",
-      "org.stellar.sdk.Price"
+      "software.amazon.event.ruler.Path",
+      "software.amazon.event.ruler.Patterns",
+      "software.amazon.event.ruler.ArrayMembership",
+      "software.amazon.event.ruler.NameStateWithPattern",
+      "software.amazon.event.ruler.CompositeByteTransition"
     ],
     "targetTests": [
-      "org.stellar.sdk.AddressTest",
-      "org.stellar.sdk.AssetTest",
-      "org.stellar.sdk.KeyPairTest",
-      "org.stellar.sdk.PriceTest"
+      "software.amazon.event.ruler.PathTest",
+      "software.amazon.event.ruler.PatternsTest",
+      "software.amazon.event.ruler.ArrayMembershipTest",
+      "software.amazon.event.ruler.NameStateWithPatternTest",
+      "software.amazon.event.ruler.CompositeByteTransitionTest"
     ]
   }
 ]

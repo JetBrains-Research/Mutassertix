@@ -9,26 +9,24 @@ import mutation.MutationPipeline
  */
 class JavaMutationPipeline : MutationPipeline {
     override fun getMutationScore(projectConfiguration: ProjectConfiguration): Int {
-        val pitestUtils = PitestUtils()
+        val pitestUtils = PitestUtils(projectConfiguration)
 
         // Start a new process to execute the PITest command
         val process = ProcessBuilder()
-            .command("sh", "-c", pitestUtils.getCommand(projectConfiguration))
+            .command("sh", "-c", pitestUtils.getCommand())
+            .redirectErrorStream(true)
             .start()
 
-        // Store the complete output from the PITest execution
-        val output = process.inputStream.bufferedReader().use { it.readText() }
+        process.inputStream.bufferedReader().use { it.readText() }
 
         // Wait for the PITest process to complete
         process.waitFor()
 
+        // Parse the PITest output and extract the mutation score
+        val mutationScore = pitestUtils.getMutationScore()
+
         // Remove report folder
         File(projectConfiguration.sourceDir + "/pitest").deleteRecursively()
-
-        // Parse the PITest output and extract the mutation score
-        val mutationScore = pitestUtils.getMutationScore(output)
-
-        println("> Collecting mutation score $mutationScore")
 
         return mutationScore
     }
