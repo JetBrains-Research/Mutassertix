@@ -51,6 +51,7 @@ object Agent {
                         # Intelligent Assertion Generator
 
                         You are an intelligent assertion generator designed to improve project mutation scores.
+                        You have to improve the assertion implementation of existing test files. Do not add tests for new functionality.
                         
                         ## Key Goals
                         - Process all test files systematically

@@ -74,10 +74,6 @@ class Tools(
     @LLMDescription("Builds the project")
     fun buildProject(): String = datasetManager.projectBuild(projectConfiguration)
 
-    @Tool
-    @LLMDescription("Return the current mutation score")
-    fun getMutationScore(): Int = mutationPipeline.getMutationScore(projectConfiguration)
-
     private fun searchFile(dir: File, classPath: String): String? {
         if (!dir.isDirectory) return null
 

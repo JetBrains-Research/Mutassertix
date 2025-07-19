@@ -2,7 +2,7 @@ package languages
 
 import languages.LanguageConfig
 import dataset.java.JavaDatasetManager
-import mutation.java.JavaMutationPipeline
+import mutation.JavaMutationPipeline
 
 class Java : LanguageConfig(
     name = "Java",
