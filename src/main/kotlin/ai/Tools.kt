@@ -3,17 +3,10 @@ package ai
 import ai.koog.agents.core.tools.annotations.LLMDescription
 import ai.koog.agents.core.tools.annotations.Tool
 import ai.koog.agents.core.tools.reflect.ToolSet
-import data.ProjectConfiguration
-import dataset.DatasetManager
 import java.io.File
-import mutation.MutationPipeline
 
 @LLMDescription("A toolkit for file operations in a project")
-class Tools(
-    val projectConfiguration: ProjectConfiguration,
-    val datasetManager: DatasetManager,
-    val mutationPipeline: MutationPipeline
-) : ToolSet {
+class Tools : ToolSet {
     @Tool
     @LLMDescription("Reads and returns the content of a file at the specified path")
     fun readTextFromFile(
@@ -69,10 +62,6 @@ class Tools(
 
         return buildStructure(currentFile, path, 0, maxDepth)
     }
-
-    @Tool
-    @LLMDescription("Builds the project")
-    fun buildProject(): String = datasetManager.projectBuild(projectConfiguration)
 
     private fun searchFile(dir: File, classPath: String): String? {
         if (!dir.isDirectory) return null

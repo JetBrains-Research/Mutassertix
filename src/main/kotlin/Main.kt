@@ -4,15 +4,15 @@ import languages.LanguageConfig
 /**
  * Main pipeline implementation
  */
-fun main() {
+suspend fun main() {
     val languageConfig: LanguageConfig = Java()
 
+    // Sets up the projects from the dataset
     val projectConfigurations = languageConfig.datasetManager.setUpProjects(languageConfig)
 
+    // Run an algorithm pipeline for each project for each test file
     for (projectConfiguration in projectConfigurations) {
-        println("> Running the pipeline for project ${projectConfiguration.projectName}")
         for (testIndex in projectConfiguration.targetTests.indices) {
-            println("> Running the pipeline for target test ${projectConfiguration.targetTests[testIndex]}")
             Pipeline.run(languageConfig, projectConfiguration, testIndex)
         }
     }

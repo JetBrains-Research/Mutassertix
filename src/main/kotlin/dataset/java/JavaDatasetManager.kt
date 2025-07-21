@@ -52,7 +52,8 @@ class JavaDatasetManager : DatasetManager() {
                 } ?: emptyList()
             )
 
-            if (projectBuild(projectConfiguration) != (buildTool as JavaBuildTool).successfulBuildComment) continue
+            // Checks a project's build result
+            if (!projectBuild(projectConfiguration).second) continue
 
             println("> Project \"$projectName\" has been added to the dataset")
             projectConfigurations.add(projectConfiguration)
@@ -61,7 +62,7 @@ class JavaDatasetManager : DatasetManager() {
         return projectConfigurations
     }
 
-    override fun projectBuild(projectConfiguration: ProjectConfiguration): String {
+    override fun projectBuild(projectConfiguration: ProjectConfiguration): Pair<String, Boolean> {
         removeTargetFiles(projectConfiguration)
 
         val result = try {
@@ -94,7 +95,7 @@ class JavaDatasetManager : DatasetManager() {
             e.message ?: "Unknown error"
         }
 
-        return result
+        return Pair(result, result == (projectConfiguration.buildTool as JavaBuildTool).successfulBuildComment)
     }
 
     /**
