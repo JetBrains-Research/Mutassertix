@@ -1,58 +1,52 @@
-import ai.Agent
-import java.io.File
+import data.PropertiesReader
+import kotlin.time.TimeSource
 import languages.Java
 import languages.LanguageConfig
-import org.jetbrains.research.mutassertix.agent.AgentUtils
-import utils.CacheUtils
+import org.jetbrains.research.mutassertix.agent.PrivateAgentUtils
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
+import utils.FilesUtils
+
+private val logger: Logger = LoggerFactory.getLogger("Main")
 
 /**
  * Main pipeline implementation
  */
-fun main() {
+suspend fun main() {
     val languageConfig: LanguageConfig = Java()
 
+    // Set up the projects from the dataset
     val projectConfigurations = languageConfig.datasetManager.setUpProjects(languageConfig)
 
-    // Prepare a report file
-    val reportFileName = "report.txt"
-    if (File(reportFileName).exists()) File(reportFileName).delete()
-    val reportFileBufferedWriter = File(reportFileName).bufferedWriter()
-    reportFileBufferedWriter.write("Project\tLLM Model\tInitial Mutation Score\tFinal Mutation Score\tScore Improvement\n")
+    // Run an algorithm pipeline for each project for each test file
+    for (projectConfiguration in projectConfigurations) {
+        logger.info("Running pipeline for project: {}", projectConfiguration.projectName)
+        val startTime = TimeSource.Monotonic.markNow()
 
-    for (llmModel in AgentUtils.getLLModels()) {
-        for (projectConfiguration in projectConfigurations) {
-            for (index in 0 until 5) {
-                println("> Running the pipeline for project ${projectConfiguration.projectName}")
+        // Create agents llm client and executor
+        val llmClient = PrivateAgentUtils.getLLMClient(PropertiesReader.grazieToken)
+        val executor = PrivateAgentUtils.getExecutor(llmClient)
 
-                // Reset project
-                languageConfig.datasetManager.resetProject(projectConfiguration)
+        // Calculate the initial mutation score
+        val initialMutationResult = languageConfig.mutationPipeline.run(projectConfiguration).mutationScore
 
-                // Calculate initial mutation score
-                languageConfig.datasetManager.projectBuild(projectConfiguration)
-                val initialMutationScore = languageConfig.mutationPipeline.getMutationScore(projectConfiguration)
-
-                // Run Assertion Generation Agent
-                Agent.run(
-                    llmModel,
-                    projectConfiguration,
-                    languageConfig.datasetManager,
-                    languageConfig.mutationPipeline
-                )
-
-                // Calculate final mutation score
-                languageConfig.datasetManager.projectBuild(projectConfiguration)
-                val finalMutationScore = languageConfig.mutationPipeline.getMutationScore(projectConfiguration)
-
-                // Write report
-                val reportLine = "${projectConfiguration.projectName}\t${llmModel.id}\t$initialMutationScore\t" +
-                        "$finalMutationScore\t${finalMutationScore - initialMutationScore}\n"
-                reportFileBufferedWriter.write(reportLine)
-                println("> Report line: $reportLine")
-
-                // Cache data
-                CacheUtils.cacheData(projectConfiguration.projectName, index, llmModel.id)
-            }
+        // Run a pipeline for each test file
+        for (testIndex in projectConfiguration.targetPairs.indices) {
+            Pipeline.run(languageConfig, projectConfiguration, executor, testIndex)
         }
+
+        // Log the time
+        val finishTime = TimeSource.Monotonic.markNow()
+        logger.info("Time: {}", finishTime - startTime)
+
+        // Report quota usage
+        logger.info("Quota: {}", PrivateAgentUtils.getQuota(llmClient))
+
+        // Report the results
+        val finalMutationResult = languageConfig.mutationPipeline. run(projectConfiguration).mutationScore
+        logger.info("Result: {}", "${projectConfiguration.projectName}\t$initialMutationResult\t$finalMutationResult\n")
+
+        // Cache the project
+        FilesUtils.cacheProject(projectConfiguration.projectName)
     }
-    reportFileBufferedWriter.close()
 }

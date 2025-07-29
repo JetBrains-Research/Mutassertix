@@ -2,54 +2,61 @@
   {
     "github": "davidmoten/word-wrap",
     "buildTool": "maven",
-    "targetClasses": [
-      "org.davidmoten.text.utils.StringBuilder2"
-    ],
-    "targetTests": [
-      "org.davidmoten.text.utils.StringBuilder2Test"
+    "targetPairs": [
+      {
+        "targetClass": "org.davidmoten.text.utils.StringBuilder2",
+        "targetTest": "org.davidmoten.text.utils.StringBuilder2Test"
+      },
+      {
+        "targetClass": "org.davidmoten.text.utils.CharSequenceConcatRightTrim",
+        "targetTest": "org.davidmoten.text.utils.CharSequenceConcatRighTrimTest"
+      }
     ]
   },
   {
     "github": "crawler-commons/crawler-commons",
-    "buildTool": "maven",
-    "targetClasses": [
-      "crawlercommons.sitemaps.SiteMapIndex",
-      "crawlercommons.sitemaps.extension.PageMap",
-      "crawlercommons.sitemaps.extension.MobileAttributes",
-      "crawlercommons.sitemaps.extension.LinkAttributes"
-    ],
-    "targetTests": [
-      "crawlercommons.sitemaps.SiteMapIndexTest",
-      "crawlercommons.sitemaps.extension.PageMapsTest",
-      "crawlercommons.sitemaps.extension.MobileAttributesTest",
-      "crawlercommons.sitemaps.extension.LinkAttributesTest"
-    ]
-  },
-  {
-    "github": "bhlangonijr/chesslib",
     "libraryDependencies": [
-      "https://repo1.maven.org/maven2/org/apache/commons/commons-lang3/3.17.0/commons-lang3-3.17.0.jar"
+      "https://repo1.maven.org/maven2/org/slf4j/slf4j-api/2.0.17/slf4j-api-2.0.17.jar",
+      "https://repo1.maven.org/maven2/commons-io/commons-io/2.19.0/commons-io-2.19.0.jar"
     ],
     "buildTool": "maven",
-    "targetClasses": [
-      "com.github.bhlangonijr.chesslib.PieceType",
-      "com.github.bhlangonijr.chesslib.unicode.UnicodePrinter"
-    ],
-    "targetTests": [
-      "com.github.bhlangonijr.chesslib.PieceTypeTest",
-      "com.github.bhlangonijr.chesslib.unicode.UnicodePrinterTest"
-    ]
-  },
-  {
-    "github": "revelc/formatter-maven-plugin",
-    "buildTool": "maven",
-    "targetClasses": [
-      "net.revelc.code.formatter.TimeUtil",
-      "net.revelc.code.formatter.LineEnding"
-    ],
-    "targetTests": [
-      "net.revelc.code.formatter.TimeUtilTest",
-      "net.revelc.code.formatter.LineEndingTest"
+    "targetPairs": [
+      {
+        "targetClass": "crawlercommons.robots.SimpleRobotRules",
+        "targetTest": "crawlercommons.robots.SimpleRobotRulesTest"
+      },
+      {
+        "targetClass": "crawlercommons.sitemaps.AbstractSiteMap",
+        "targetTest": "crawlercommons.sitemaps.SiteMapIndexTest"
+      },
+      {
+        "targetClass": "crawlercommons.sitemaps.SiteMapIndex",
+        "targetTest": "crawlercommons.sitemaps.SiteMapIndexTest"
+      },
+      {
+        "targetClass": "crawlercommons.sitemaps.SiteMapURL",
+        "targetTest": "crawlercommons.sitemaps.SiteMapURLTest"
+      },
+      {
+        "targetClass": "crawlercommons.sitemaps.extension.ImageAttributes",
+        "targetTest": "crawlercommons.sitemaps.extension.ImageAttributesTest"
+      },
+      {
+        "targetClass": "crawlercommons.sitemaps.extension.NewsAttributes",
+        "targetTest": "crawlercommons.sitemaps.extension.NewsAttributesTest"
+      },
+      {
+        "targetClass": "crawlercommons.sitemaps.extension.VideoAttributes",
+        "targetTest": "crawlercommons.sitemaps.extension.VideoAttributesTest"
+      },
+      {
+        "targetClass": "crawlercommons.sitemaps.extension.PageMap",
+        "targetTest": "crawlercommons.sitemaps.extension.PageMapsTest"
+      },
+      {
+        "targetClass": "crawlercommons.domains.PaidLevelDomain",
+        "targetTest": "crawlercommons.domains.PaidLevelDomainTest"
+      }
     ]
   },
   {
@@ -66,56 +73,140 @@
       "https://repo1.maven.org/maven2/org/slf4j/slf4j-api/2.0.17/slf4j-api-2.0.17.jar",
       "https://repo1.maven.org/maven2/software/amazon/awssdk/utils/2.31.51/utils-2.31.51.jar",
       "https://repo1.maven.org/maven2/software/amazon/awssdk/crt/aws-crt/0.38.3/aws-crt-0.38.3.jar",
-      "https://repo1.maven.org/maven2/software/amazon/awssdk/http-client-spi/2.31.51/http-client-spi-2.31.51.jar"
+      "https://repo1.maven.org/maven2/software/amazon/awssdk/http-client-spi/2.31.51/http-client-spi-2.31.51.jar",
+      "https://repo1.maven.org/maven2/software/amazon/awssdk/auth/2.31.78/auth-2.31.78.jar",
+      "https://repo1.maven.org/maven2/software/amazon/awssdk/identity-spi/2.31.78/identity-spi-2.31.78.jar",
+      "https://repo1.maven.org/maven2/com/github/stefanbirkner/system-lambda/1.2.1/system-lambda-1.2.1.jar",
+      "https://repo1.maven.org/maven2/org/reactivestreams/reactive-streams/1.0.4/reactive-streams-1.0.4.jar",
+      "https://repo1.maven.org/maven2/com/github/ben-manes/caffeine/caffeine/3.1.8/caffeine-3.1.8.jar",
+      "https://repo1.maven.org/maven2/software/amazon/awssdk/s3-transfer-manager/2.32.9/s3-transfer-manager-2.32.9.jar",
+      "https://repo1.maven.org/maven2/software/amazon/awssdk/http-auth-spi/2.32.9/http-auth-spi-2.32.9.jar",
+      "https://repo1.maven.org/maven2/software/amazon/awssdk/retries-spi/2.32.8/retries-spi-2.32.8.jar",
+      "https://repo1.maven.org/maven2/software/amazon/awssdk/regions/2.32.9/regions-2.32.9.jar"
     ],
-    "targetClasses": [
-      "software.amazon.nio.spi.s3.util.S3XFileSystemInfo",
-      "software.amazon.nio.spi.s3.Crc32cFileIntegrityCheck",
-      "software.amazon.nio.spi.s3.PosixLikePathRepresentation",
-      "software.amazon.nio.spi.s3.S3OpenOption"
-    ],
-    "targetTests": [
-      "software.amazon.nio.spi.s3.util.S3XFileSystemInfoTest",
-      "software.amazon.nio.spi.s3.Crc32cFileIntegrityCheckTest",
-      "software.amazon.nio.spi.s3.PosixLikePathRepresentationTest",
-      "software.amazon.nio.spi.s3.S3OpenOptionTest"
+    "targetPairs": [
+      {
+        "targetClass": "software.amazon.nio.spi.s3.util.LibraryVersion",
+        "targetTest": "software.amazon.nio.spi.s3.util.LibraryVersionBranchCoverageTest"
+      },
+      {
+        "targetClass": "software.amazon.nio.spi.s3.util.LibraryVersion",
+        "targetTest": "software.amazon.nio.spi.s3.util.LibraryVersionEdgeCaseTest"
+      },
+      {
+        "targetClass": "software.amazon.nio.spi.s3.util.LibraryVersion",
+        "targetTest": "software.amazon.nio.spi.s3.util.LibraryVersionTest"
+      },
+      {
+        "targetClass": "software.amazon.nio.spi.s3.util.S3XFileSystemInfo",
+        "targetTest": "software.amazon.nio.spi.s3.util.S3XFileSystemInfoTest"
+      },
+      {
+        "targetClass": "software.amazon.nio.spi.s3.util.TimeOutUtils",
+        "targetTest": "software.amazon.nio.spi.s3.util.TimeOutUtilsTest"
+      },
+      {
+        "targetClass": "software.amazon.nio.spi.s3.AsyncS3FileChannel",
+        "targetTest": "software.amazon.nio.spi.s3.AsyncS3FileChannelTest"
+      },
+      {
+        "targetClass": "software.amazon.nio.spi.s3.CacheableS3Client",
+        "targetTest": "software.amazon.nio.spi.s3.CacheableS3ClientTest"
+      },
+      {
+        "targetClass": "software.amazon.nio.spi.s3.Crc32FileIntegrityCheck",
+        "targetTest": "software.amazon.nio.spi.s3.Crc32FileIntegrityCheckTest"
+      },
+      {
+        "targetClass": "software.amazon.nio.spi.s3.Crc32cFileIntegrityCheck",
+        "targetTest": "software.amazon.nio.spi.s3.Crc32cFileIntegrityCheckTest"
+      },
+      {
+        "targetClass": "software.amazon.nio.spi.s3.Crc64nvmeFileIntegrityCheck",
+        "targetTest": "software.amazon.nio.spi.s3.Crc64nvmeFileIntegrityCheckTest"
+      },
+      {
+        "targetClass": "software.amazon.nio.spi.s3.PosixLikePathRepresentation",
+        "targetTest": "software.amazon.nio.spi.s3.PosixLikePathRepresentationTest"
+      },
+      {
+        "targetClass": "software.amazon.nio.spi.s3.S3BasicFileAttributes",
+        "targetTest": "software.amazon.nio.spi.s3.S3BasicFileAttributesTest"
+      },
+      {
+        "targetClass": "software.amazon.nio.spi.s3.S3BasicFileAttributeView",
+        "targetTest": "software.amazon.nio.spi.s3.S3BasicFileAttributeViewTest"
+      },
+      {
+        "targetClass": "software.amazon.nio.spi.s3.S3FileSystem",
+        "targetTest": "software.amazon.nio.spi.s3.S3FileSystemTest"
+      },
+      {
+        "targetClass": "software.amazon.nio.spi.s3.S3OpenOption",
+        "targetTest": "software.amazon.nio.spi.s3.S3OpenOptionTest"
+      },
+      {
+        "targetClass": "software.amazon.nio.spi.s3.S3PreventConcurrentOverwrite",
+        "targetTest": "software.amazon.nio.spi.s3.S3PreventConcurrentOverwriteTest"
+      },
+      {
+        "targetClass": "software.amazon.nio.spi.s3.S3AssumeObjectNotExists",
+        "targetTest": "software.amazon.nio.spi.s3.S3AssumeObjectNotExistsTest"
+      },
+      {
+        "targetClass": "software.amazon.nio.spi.s3.S3PutOnlyIfModified",
+        "targetTest": "software.amazon.nio.spi.s3.S3PutOnlyIfModifiedTest"
+      },
+      {
+        "targetClass": "software.amazon.nio.spi.s3.S3RangeHeader",
+        "targetTest": "software.amazon.nio.spi.s3.S3RangeHeaderTest"
+      },
+      {
+        "targetClass": "software.amazon.nio.spi.s3.S3ReadAheadByteChannel",
+        "targetTest": "software.amazon.nio.spi.s3.S3ReadAheadByteChannelTest"
+      },
+      {
+        "targetClass": "software.amazon.nio.spi.s3.S3SeekableByteChannel",
+        "targetTest": "software.amazon.nio.spi.s3.S3SeekableByteChannelTest"
+      },
+      {
+        "targetClass": "software.amazon.nio.spi.s3.S3TransferException",
+        "targetTest": "software.amazon.nio.spi.s3.S3TransferExceptionTest"
+      },
+      {
+        "targetClass": "software.amazon.nio.spi.s3.S3TransferUtil",
+        "targetTest": "software.amazon.nio.spi.s3.S3TransferUtilTest"
+      },
+      {
+        "targetClass": "software.amazon.nio.spi.s3.S3WritableByteChannel",
+        "targetTest": "software.amazon.nio.spi.s3.S3WritableByteChannelTest"
+      }
     ]
   },
   {
     "github": "LMAX-Exchange/Simple-DSL",
     "buildTool": "gradle",
-    "targetClasses": [
-      "com.lmax.simpledsl.internal.RepeatingParamValues",
-      "com.lmax.simpledsl.internal.SimpleDslParam",
-      "com.lmax.simpledsl.internal.NameValuePair"
-    ],
-    "targetTests": [
-      "com.lmax.simpledsl.internal.RepeatingParamValuesTest",
-      "com.lmax.simpledsl.internal.SimpleDslParamTest",
-      "com.lmax.simpledsl.internal.NameValuePairTest"
-    ]
-  },
-  {
-    "github": "BrightSpots/rcv",
-    "buildTool": "gradle",
-    "libraryDependencies": [
-      "https://repo1.maven.org/maven2/com/squareup/retrofit2/converter-jackson/3.0.0/converter-jackson-3.0.0.jar",
-      "https://repo1.maven.org/maven2/com/fasterxml/jackson/core/jackson-annotations/2.19.0/jackson-annotations-2.19.0.jar",
-      "https://repo1.maven.org/maven2/com/fasterxml/jackson/core/jackson-core/2.19.0/jackson-core-2.19.0.jar",
-      "https://repo1.maven.org/maven2/com/fasterxml/jackson/core/jackson-databind/2.19.0/jackson-databind-2.19.0.jar",
-      "https://repo1.maven.org/maven2/org/openjfx/javafx-graphics/24.0.1/javafx-graphics-24.0.1-mac-aarch64.jar",
-      "https://repo1.maven.org/maven2/org/openjfx/javafx-graphics/24.0.1/javafx-graphics-24.0.1.jar",
-      "https://repo1.maven.org/maven2/org/openjfx/javafx-fxml/24.0.1/javafx-fxml-24.0.1-mac-aarch64.jar",
-      "https://repo1.maven.org/maven2/org/openjfx/javafx-controls/24.0.1/javafx-controls-24.0.1-mac-aarch64.jar",
-      "https://repo1.maven.org/maven2/org/openjfx/javafx-controls/24.0.1/javafx-controls-24.0.1.jar",
-      "https://repo1.maven.org/maven2/org/openjfx/javafx-base/24.0.1/javafx-base-24.0.1-mac-aarch64.jar",
-      "https://repo1.maven.org/maven2/org/openjfx/javafx-base/24.0.1/javafx-base-24.0.1.jar"
-    ],
-    "targetClasses": [
-      "network.brightspots.rcv.ContestConfigMigration"
-    ],
-    "targetTests": [
-      "network.brightspots.rcv.ContestConfigTests"
+    "targetPairs": [
+      {
+        "targetClass": "com.lmax.simpledsl.internal.DslParamsImpl",
+        "targetTest": "com.lmax.simpledsl.internal.DslParamsImplTest"
+      },
+      {
+        "targetClass": "com.lmax.simpledsl.internal.DslParamsParser",
+        "targetTest": "com.lmax.simpledsl.internal.DslParamsParserTest"
+      },
+      {
+        "targetClass": "com.lmax.simpledsl.internal.RepeatingParamValues",
+        "targetTest": "com.lmax.simpledsl.internal.RepeatingParamValuesTest"
+      },
+      {
+        "targetClass": "com.lmax.simpledsl.internal.SimpleDslParam",
+        "targetTest": "com.lmax.simpledsl.internal.SimpleDslParamTest"
+      },
+      {
+        "targetClass": "com.lmax.simpledsl.internal.NameValuePair",
+        "targetTest": "com.lmax.simpledsl.internal.NameValuePairTest"
+      }
     ]
   },
   {
@@ -129,36 +220,53 @@
       "https://repo1.maven.org/maven2/com/fasterxml/jackson/core/jackson-core/2.19.0/jackson-core-2.19.0.jar",
       "https://repo1.maven.org/maven2/com/fasterxml/jackson/core/jackson-databind/2.19.0/jackson-databind-2.19.0.jar",
       "https://repo1.maven.org/maven2/com/squareup/okio/okio-jvm/3.9.1/okio-jvm-3.9.1.jar",
-      "https://repo1.maven.org/maven2/com/squareup/okhttp3/mockwebserver3/5.0.0-alpha.14/mockwebserver3-5.0.0-alpha.14.jar"
+      "https://repo1.maven.org/maven2/com/squareup/okhttp3/mockwebserver3/5.0.0-alpha.14/mockwebserver3-5.0.0-alpha.14.jar",
+      "https://repo1.maven.org/maven2/org/skyscreamer/jsonassert/1.5.3/jsonassert-1.5.3.jar",
+      "https://repo1.maven.org/maven2/org/json/json/20250517/json-20250517.jar",
+      "https://repo1.maven.org/maven2/net/bytebuddy/byte-buddy/1.17.5/byte-buddy-1.17.5.jar",
+      "https://repo1.maven.org/maven2/net/bytebuddy/byte-buddy-agent/1.17.5/byte-buddy-agent-1.17.5.jar"
     ],
-    "targetClasses": [
-      "com.whatsapp.api.WhatsappApiFactory",
-      "com.whatsapp.api.WhatsappApiServiceGenerator",
-      "com.whatsapp.api.service.WhatsappBusinessManagementApiService",
-      "com.whatsapp.api.domain.messages.Message",
-      "com.whatsapp.api.domain.webhook.WebHook"
-    ],
-    "targetTests": [
-      "com.whatsapp.api.WhatsappApiFactoryTest",
-      "com.whatsapp.api.domain.messages.MessageTest",
-      "com.whatsapp.api.WhatsappApiServiceGeneratorTest",
-      "com.whatsapp.api.domain.webhook.WebHookPayloadTest"
-    ]
-  },
-  {
-    "github": "wmixvideo/nfe",
-    "buildTool": "maven",
-    "targetClasses": [
-      "com.fincatto.documentofiscal.DFAmbiente",
-      "com.fincatto.documentofiscal.utils.DFUtils",
-      "com.fincatto.documentofiscal.validadores.DFIntegerValidador",
-      "com.fincatto.documentofiscal.DFModelo"
-    ],
-    "targetTests": [
-      "com.fincatto.documentofiscal.DFAmbienteTest",
-      "com.fincatto.documentofiscal.utils.DFUtilsTest",
-      "com.fincatto.documentofiscal.validadores.DFIntegerValidadorTest",
-      "com.fincatto.documentofiscal.DFModeloTest"
+    "targetPairs": [
+      {
+        "targetClass": "com.whatsapp.api.domain.messages.Message",
+        "targetTest": "com.whatsapp.api.domain.messages.MessageTest"
+      },
+      {
+        "targetClass": "com.whatsapp.api.domain.webhook.WebHook",
+        "targetTest": "com.whatsapp.api.domain.webhook.WebHookPayloadTest"
+      },
+      {
+        "targetClass": "com.whatsapp.api.exception.utils.Formatter",
+        "targetTest": "com.whatsapp.api.exception.utils.FormatterTest"
+      },
+      {
+        "targetClass": "com.whatsapp.api.exception.WhatsappApiException",
+        "targetTest": "com.whatsapp.api.exception.WhatsappApiExceptionTest"
+      },
+      {
+        "targetClass": "com.whatsapp.api.impl.WhatsappBusinessCloudApi",
+        "targetTest": "com.whatsapp.api.impl.WhatsappBusinessCloudApiTest"
+      },
+      {
+        "targetClass": "com.whatsapp.api.impl.WhatsappBusinessManagementApi",
+        "targetTest": "com.whatsapp.api.impl.WhatsappBusinessManagementApiTest"
+      },
+      {
+        "targetClass": "com.whatsapp.api.interceptor.AuthenticationInterceptor",
+        "targetTest": "com.whatsapp.api.interceptor.AuthenticationInterceptorTest"
+      },
+      {
+        "targetClass": "com.whatsapp.api.utils.Formatter",
+        "targetTest": "com.whatsapp.api.utils.FormatterTest"
+      },
+      {
+        "targetClass": "com.whatsapp.api.WhatsappApiFactory",
+        "targetTest": "com.whatsapp.api.WhatsappApiFactoryTest"
+      },
+      {
+        "targetClass": "com.whatsapp.api.WhatsappApiServiceGenerator",
+        "targetTest": "com.whatsapp.api.WhatsappApiServiceGeneratorTest"
+      }
     ]
   },
   {
@@ -171,19 +279,145 @@
       "https://repo1.maven.org/maven2/com/fasterxml/jackson/core/jackson-databind/2.19.0/jackson-databind-2.19.0.jar",
       "https://repo1.maven.org/maven2/ch/randelshofer/fastdoubleparser/2.0.1/fastdoubleparser-2.0.1.jar"
     ],
-    "targetClasses": [
-      "software.amazon.event.ruler.Path",
-      "software.amazon.event.ruler.Patterns",
-      "software.amazon.event.ruler.ArrayMembership",
-      "software.amazon.event.ruler.NameStateWithPattern",
-      "software.amazon.event.ruler.CompositeByteTransition"
+    "targetPairs": [
+      {
+        "targetClass": "software.amazon.event.ruler.ArrayMembership",
+        "targetTest": "software.amazon.event.ruler.ArrayMembershipTest"
+      },
+      {
+        "targetClass": "software.amazon.event.ruler.ByteMap",
+        "targetTest": "software.amazon.event.ruler.ByteMapTest"
+      },
+      {
+        "targetClass": "software.amazon.event.ruler.ByteMatch",
+        "targetTest": "software.amazon.event.ruler.ByteMatchTest"
+      },
+      {
+        "targetClass": "software.amazon.event.ruler.ByteState",
+        "targetTest": "software.amazon.event.ruler.ByteStateTest"
+      },
+      {
+        "targetClass": "software.amazon.event.ruler.CIDR",
+        "targetTest": "software.amazon.event.ruler.CIDRTest"
+      },
+      {
+        "targetClass": "software.amazon.event.ruler.ComparableNumber",
+        "targetTest": "software.amazon.event.ruler.ComparableNumberTest"
+      },
+      {
+        "targetClass": "software.amazon.event.ruler.CompositeByteTransition",
+        "targetTest": "software.amazon.event.ruler.CompositeByteTransitionTest"
+      },
+      {
+        "targetClass": "software.amazon.event.ruler.CompoundByteTransition",
+        "targetTest": "software.amazon.event.ruler.CompoundByteTransitionTest"
+      },
+      {
+        "targetClass": "software.amazon.event.ruler.Event",
+        "targetTest": "software.amazon.event.ruler.EventTest"
+      },
+      {
+        "targetClass": "software.amazon.event.ruler.GenericMachineConfiguration",
+        "targetTest": "software.amazon.event.ruler.GenericMachineConfigurationTest"
+      },
+      {
+        "targetClass": "software.amazon.event.ruler.IntIntMap",
+        "targetTest": "software.amazon.event.ruler.IntIntMapTest"
+      },
+      {
+        "targetClass": "software.amazon.event.ruler.MachineComplexityEvaluator",
+        "targetTest": "software.amazon.event.ruler.MachineComplexityEvaluatorTest"
+      },
+      {
+        "targetClass": "software.amazon.event.ruler.NameStateWithPattern",
+        "targetTest": "software.amazon.event.ruler.NameStateWithPatternTest"
+      },
+      {
+        "targetClass": "software.amazon.event.ruler.Path",
+        "targetTest": "software.amazon.event.ruler.PathTest"
+      },
+      {
+        "targetClass": "software.amazon.event.ruler.Patterns",
+        "targetTest": "software.amazon.event.ruler.PatternsTest"
+      },
+      {
+        "targetClass": "software.amazon.event.ruler.Ruler",
+        "targetTest": "software.amazon.event.ruler.RulerTest"
+      },
+      {
+        "targetClass": "software.amazon.event.ruler.SetOperations",
+        "targetTest": "software.amazon.event.ruler.SetOperationsTest"
+      },
+      {
+        "targetClass": "software.amazon.event.ruler.SingleStateNameMatcher",
+        "targetTest": "software.amazon.event.ruler.SingleStateNameMatcherTest"
+      },
+      {
+        "targetClass": "software.amazon.event.ruler.SubRuleContext",
+        "targetTest": "software.amazon.event.ruler.SubRuleContextTest"
+      }
+    ]
+  },
+  {
+    "github": "wmixvideo/nfe",
+    "buildTool": "maven",
+    "libraryDependencies": [
+      "https://repo1.maven.org/maven2/org/apache/commons/commons-lang3/3.18.0/commons-lang3-3.18.0.jar",
+      "https://repo1.maven.org/maven2/org/simpleframework/simple-xml/2.7.1/simple-xml-2.7.1.jar"
     ],
-    "targetTests": [
-      "software.amazon.event.ruler.PathTest",
-      "software.amazon.event.ruler.PatternsTest",
-      "software.amazon.event.ruler.ArrayMembershipTest",
-      "software.amazon.event.ruler.NameStateWithPatternTest",
-      "software.amazon.event.ruler.CompositeByteTransitionTest"
+    "targetPairs": [
+      {
+        "targetClass": "com.fincatto.documentofiscal.utils.DFPersister",
+        "targetTest": "com.fincatto.documentofiscal.utils.DFPersisterTest"
+      },
+      {
+        "targetClass": "com.fincatto.documentofiscal.utils.DFCadeiaCertificados",
+        "targetTest": "com.fincatto.documentofiscal.utils.DFCadeiaCertificadosTest"
+      },
+      {
+        "targetClass": "com.fincatto.documentofiscal.utils.DFAssinaturaDigital",
+        "targetTest": "com.fincatto.documentofiscal.utils.DFAssinaturaDigitalTest"
+      },
+      {
+        "targetClass": "com.fincatto.documentofiscal.utils.DFUtils",
+        "targetTest": "com.fincatto.documentofiscal.utils.DFUtilsTest"
+      },
+      {
+        "targetClass": "com.fincatto.documentofiscal.validadores.DFIntegerValidador",
+        "targetTest": "com.fincatto.documentofiscal.validadores.DFIntegerValidadorTest"
+      },
+      {
+        "targetClass": "com.fincatto.documentofiscal.validadores.DFListValidador",
+        "targetTest": "com.fincatto.documentofiscal.validadores.DFListValidadorTest"
+      },
+      {
+        "targetClass": "com.fincatto.documentofiscal.validadores.DFBigDecimalValidador",
+        "targetTest": "com.fincatto.documentofiscal.validadores.DFBigDecimalValidadorTest"
+      },
+      {
+        "targetClass": "com.fincatto.documentofiscal.validadores.DFBigIntegerValidador",
+        "targetTest": "com.fincatto.documentofiscal.validadores.DFBigIntegerValidadorTest"
+      },
+      {
+        "targetClass": "com.fincatto.documentofiscal.DFAmbiente",
+        "targetTest": "com.fincatto.documentofiscal.DFAmbienteTest"
+      },
+      {
+        "targetClass": "com.fincatto.documentofiscal.DFConfig",
+        "targetTest": "com.fincatto.documentofiscal.DFConfigTest"
+      },
+      {
+        "targetClass": "com.fincatto.documentofiscal.DFModelo",
+        "targetTest": "com.fincatto.documentofiscal.DFModeloTest"
+      },
+      {
+        "targetClass": "com.fincatto.documentofiscal.DFPais",
+        "targetTest": "com.fincatto.documentofiscal.DFPaisTest"
+      },
+      {
+        "targetClass": "com.fincatto.documentofiscal.DFUnidadeFederativa",
+        "targetTest": "com.fincatto.documentofiscal.DFUnidadeFederativaTest"
+      }
     ]
   }
 ]
