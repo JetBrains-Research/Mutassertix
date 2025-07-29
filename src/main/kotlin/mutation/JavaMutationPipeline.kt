@@ -1,25 +1,28 @@
 package mutation
 
-import data.ProjectConfiguration
+import data.ProjectConfig
 import java.io.File
 import java.net.URL
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 
 /**
  * Represents a pipeline for running PITest mutation testing.
  */
 class JavaMutationPipeline : MutationPipeline {
+    private val logger: Logger = LoggerFactory.getLogger(JavaMutationPipeline::class.java)
     private val libFolder = "build/libs"
 
     /**
      * Retrieves the mutation score from the PITest mutation testing report.
      *
-     * @param projectConfiguration The configuration for the project.
+     * @param projectConfig The configuration for the project.
      * @return The mutation score as an integer percentage.
      */
-    fun getMutationScore(projectConfiguration: ProjectConfiguration): Int {
+    private fun getMutationScore(projectConfig: ProjectConfig): Int {
         val mutationPattern = """<td>(\d+)%\s*<div class="coverage_bar">""".toRegex()
 
-        val indexFile = File(projectConfiguration.sourceDir + "/pitest/index.html")
+        val indexFile = File(projectConfig.sourceDir + "/pitest/index.html")
 
         if (!indexFile.exists()) return 0
 
@@ -32,16 +35,39 @@ class JavaMutationPipeline : MutationPipeline {
     }
 
     /**
-     * Extracts and generates a list of survived mutations from the PITest mutation testing report.
+     * Calculates the number of killed mutants from the PITest mutation testing report.
      *
-     * @param projectConfiguration The configuration of the project.
-     * @param testIndex Index of the test from the targetClasses list in the project configuration.
-     * @return A list of strings describing the survived mutations, including line number, location, mutation type, and test coverage details.
+     * @param projectConfig The configuration for the project.
+     * @return The number of killed mutants.
      */
-    fun getSurvivedMutationsList(projectConfiguration: ProjectConfiguration, testIndex: Int): List<String> {
-        val sourceDirPath = projectConfiguration.sourceDir
-        val pitestDataDirPath = projectConfiguration.targetClasses[testIndex].substringBeforeLast(".")
-        val classPath = projectConfiguration.targetClasses[testIndex].substringAfterLast(".") + ".java.html"
+    private fun getKilledMutantsCount(projectConfig: ProjectConfig): Int {
+        val killedMutantsPattern = """<div class="coverage_legend">(\d+)/(\d+)</div>""".toRegex()
+
+        val indexFile = File(projectConfig.sourceDir + "/pitest/index.html")
+
+        if (!indexFile.exists()) return 0
+
+        val matchResult =
+            killedMutantsPattern.findAll(indexFile.readText())
+                .drop(1) // Skip the Line Coverage
+                .firstOrNull()
+
+        return matchResult?.groupValues?.get(1)?.toIntOrNull() ?: 0
+    }
+
+    /**
+     * Processes a single target class to extract survived mutations.
+     *
+     * @param projectConfig The configuration of the project.
+     * @param targetClass The specific target class to analyze for survived mutations.
+     * @return A list of strings describing the survived mutations for this specific class.
+     */
+    private fun processSingleClassMutations(projectConfig: ProjectConfig, targetClass: String): List<String> {
+        val survivedMutations = mutableListOf<String>()
+
+        val sourceDirPath = projectConfig.sourceDir
+        val pitestDataDirPath = targetClass.substringBeforeLast(".")
+        val classPath = targetClass.substringAfterLast(".") + ".java.html"
 
         val pitestDataFile = File("$sourceDirPath/pitest/$pitestDataDirPath/$classPath")
         if (!pitestDataFile.exists()) return emptyList()
@@ -55,10 +81,6 @@ class JavaMutationPipeline : MutationPipeline {
         val survivedPattern =
             """<p class='SURVIVED'><span class='pop'>\d+\.<span><b>\d+</b><br/><b>Location : </b>([^<]+)<br/><b>Killed by : </b>none</span></span> ([^<]+) &rarr; SURVIVED</span>""".toRegex()
 
-        // Pattern to find test coverage information
-        val coveragePattern =
-            """<div class="covered-tests" id="[^"]*" style="display:none;">Covered by tests:\s*<ul>\s*<li>([^<]*)</li>""".toRegex()
-
         // Find all line numbers and their positions in the file
         val lineNumberMatches = lineNumberPattern.findAll(fileContent)
         val lineNumbers = mutableMapOf<Int, String>()
@@ -70,21 +92,10 @@ class JavaMutationPipeline : MutationPipeline {
         }
 
         val survivedMatches = survivedPattern.findAll(fileContent)
-        val coverageMatches = coveragePattern.findAll(fileContent)
 
-        // Combine the matches into a list of strings
-        val survivedMutations = mutableListOf<String>()
-
-        survivedMatches.forEachIndexed { index, matchResult ->
+        survivedMatches.forEachIndexed { _, matchResult ->
             val location = matchResult.groupValues[1]
             val mutationName = matchResult.groupValues[2]
-
-            // Get the corresponding coverage information if available
-            val coverageInfo = if (index < coverageMatches.count()) {
-                coverageMatches.elementAt(index).groupValues[1]
-            } else {
-                "No test coverage information"
-            }
 
             // Find the closest line number that appears before this mutation
             val position = matchResult.range.first
@@ -94,33 +105,56 @@ class JavaMutationPipeline : MutationPipeline {
                 ?.value ?: "Unknown"
 
             // Format the information into a presentable string as required in the issue description
-            val mutationInfo =
-                "Line: $lineNumber, Location: $location, Mutation: $mutationName, Test: $coverageInfo"
+            val mutationInfo = "File: $targetClass, Line: $lineNumber, Location: $location, Mutation: $mutationName"
             survivedMutations.add(mutationInfo)
         }
 
         return survivedMutations
     }
+    
+    /**
+     * Extracts and generates a list of survived mutations from the PITest mutation testing report for multiple target classes.
+     *
+     * @param projectConfig The configuration of the project.
+     * @param targetClasses The list of target classes to analyze for survived mutations.
+     * @return A list of strings describing the survived mutations, including line number, location, mutation type, and test coverage details.
+     */
+    private fun getSurvivedMutationList(projectConfig: ProjectConfig, targetClasses: List<String>): List<String> {
+        val allSurvivedMutations = mutableListOf<String>()
+        
+        for (targetClass in targetClasses) {
+            allSurvivedMutations.addAll(processSingleClassMutations(projectConfig, targetClass))
+        }
+        
+        return allSurvivedMutations
+    }
 
     /**
-     * Generates the complete command line string to run PITest mutation testing.
+     * Generates the complete command line string to run PITest mutation testing for multiple target classes and tests.
      *
+     * @param projectConfig The configuration for the project.
+     * @param targetClasses List of target classes for mutation testing.
+     * @param targetTests List of target tests for mutation testing.
      * @return Complete command line string for executing PITest
      */
-    fun getCommand(projectConfiguration: ProjectConfiguration): String {
+    private fun getCommand(projectConfig: ProjectConfig, targetClasses: List<String>, targetTests: List<String>): String {
+        val targetClassesStr = targetClasses.joinToString(",")
+        val targetTestsStr = targetTests.joinToString(",")
+        
         return "java -cp ${
             getCPLine(
-                projectConfiguration.sourceDir,
-                projectConfiguration.buildTool.projectDependencies,
-                projectConfiguration.libraryDependencies
+                projectConfig.sourceDir,
+                projectConfig.buildTool.projectDependencies,
+                projectConfig.libraryDependencies
             )
         }" +
                 " org.pitest.mutationtest.commandline.MutationCoverageReport" +
-                " --reportDir ${projectConfiguration.sourceDir}/pitest" +
-                " --targetClasses ${projectConfiguration.targetClasses.joinToString(",")}" +
-                " --targetTests ${projectConfiguration.targetTests.joinToString(",")}" +
-                " --sourceDirs ${projectConfiguration.sourceDir}" +
-                " --verbosity VERBOSE"
+                " --reportDir ${projectConfig.sourceDir}/pitest" +
+                " --targetClasses $targetClassesStr" +
+                " --targetTests $targetTestsStr" +
+                " --sourceDirs ${projectConfig.sourceDir}" +
+                " --verbosity VERBOSE" +
+                " --mutators ALL"
     }
 
     /**
@@ -179,25 +213,45 @@ class JavaMutationPipeline : MutationPipeline {
                         input.copyTo(output)
                     }
                 }
-                println("> Successfully downloaded $jarName")
-            } catch (_: Exception) {
-                println("> ERROR: Failed to download $jarName")
+                logger.info("Successfully downloaded {}", jarName)
+            } catch (e: Exception) {
+                logger.error("Failed to download {}", jarName, e)
             }
         }
     }
 
     /**
-     * Executes the mutation testing process using PITest and returns the results.
+     * Executes the mutation testing pipeline for the specified project configuration, target class, and target test.
      *
-     * @param projectConfiguration The configuration for the project.
-     * @param testIndex The index of the specific test within the project's targetClasses list to be used
-     *        for mutation testing.
-     * @return A MutationResult object containing the mutation testing score and a list of survived mutations.
+     * @param projectConfig The configuration for the project.
+     * @param targetClass The specific target class for mutation testing.
+     * @param targetTest The specific target test for mutation testing.
+     * @return A MutationResult object containing the mutation testing score and a list of mutations that survived the tests.
      */
-    override fun run(projectConfiguration: ProjectConfiguration, testIndex: Int): MutationResult {
+    private fun mutationPipeline(
+        projectConfig: ProjectConfig,
+        targetClass: String,
+        targetTest: String
+    ): MutationResult {
+        return mutationPipeline(projectConfig, listOf(targetClass), listOf(targetTest))
+    }
+    
+    /**
+     * Executes the mutation testing pipeline for the specified project configuration, target classes, and target tests.
+     *
+     * @param projectConfig The configuration for the project.
+     * @param targetClasses The list of target classes for mutation testing.
+     * @param targetTests The list of target tests for mutation testing.
+     * @return A MutationResult object containing the mutation testing score and a list of mutations that survived the tests.
+     */
+    private fun mutationPipeline(
+        projectConfig: ProjectConfig,
+        targetClasses: List<String>,
+        targetTests: List<String>
+    ): MutationResult {
         // Start a new process to execute the PITest command
         val process = ProcessBuilder()
-            .command("sh", "-c", getCommand(projectConfiguration))
+            .command("sh", "-c", getCommand(projectConfig, targetClasses, targetTests))
             .redirectErrorStream(true)
             .start()
 
@@ -207,12 +261,48 @@ class JavaMutationPipeline : MutationPipeline {
         process.waitFor()
 
         // Collect data from the report
-        val mutationScore = getMutationScore(projectConfiguration)
-        val survivedMutationsList = getSurvivedMutationsList(projectConfiguration, testIndex)
+        val mutationScore = getMutationScore(projectConfig)
+        logger.info("Mutation score: {}", mutationScore)
+        val killedMutantsCount = getKilledMutantsCount(projectConfig)
+        logger.info("Killed mutants count: {}", killedMutantsCount)
+        val survivedMutationList = getSurvivedMutationList(projectConfig, targetClasses)
+        logger.info("Survived mutations count: {}", survivedMutationList.size)
+        logger.info("Survived mutations list:\n{}", survivedMutationList.joinToString("\n"))
 
         // Remove report folder
-        File(projectConfiguration.sourceDir + "/pitest").deleteRecursively()
+        File(projectConfig.sourceDir + "/pitest").deleteRecursively()
 
-        return MutationResult(survivedMutationsList, mutationScore)
+        return MutationResult(mutationScore, killedMutantsCount, survivedMutationList)
+    }
+
+    /**
+     * Executes the mutation testing process for the specific target class-test pair.
+     *
+     * @param projectConfig The configuration for the project.
+     * @param targetPairIndex The index of the target class-test pair to use.
+     * @return A MutationResult object containing the mutation testing score and a list of survived mutations.
+     */
+    override fun run(projectConfig: ProjectConfig, targetPairIndex: Int): MutationResult {
+        val pair = projectConfig.targetPairs[targetPairIndex]
+        return mutationPipeline(projectConfig, pair.targetClass, pair.targetTest)
+    }
+
+    /**
+     * Executes the mutation testing process for all target class-test pairs in the project.
+     *
+     * @param projectConfig The configuration for the project.
+     * @return A MutationResult object containing the mutation testing score and a list of survived mutations.
+     */
+    override fun run(projectConfig: ProjectConfig): MutationResult {
+        // Extract target classes and tests directly from targetPairs
+        val targetClasses = projectConfig.targetPairs.map { it.targetClass }
+        val targetTests = projectConfig.targetPairs.map { it.targetTest }
+        
+        // Run mutation testing for all target classes and tests at once
+        return mutationPipeline(
+            projectConfig,
+            targetClasses,
+            targetTests
+        )
     }
 }

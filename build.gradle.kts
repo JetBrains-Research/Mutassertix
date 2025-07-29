@@ -1,6 +1,7 @@
 plugins {
     id("java")
     kotlin("jvm")
+    id("org.jetbrains.kotlin.plugin.serialization") version "2.1.10"
 }
 
 group = "org.example"
@@ -27,15 +28,27 @@ allprojects {
 }
 
 dependencies {
+    val jetbrainsAiVersion = "1.0.0-beta.68+0.4.71"
+    val koogVersion = "0.2.1"
+    implementation("ai.jetbrains.code.prompt:code-prompt-executor-grazie-koog:$jetbrainsAiVersion")
+    implementation("ai.jetbrains.code.agents:code-agents-micro-base:$jetbrainsAiVersion")
+    implementation("ai.koog:koog-agents:$koogVersion")
+
     testImplementation(platform("org.junit:junit-bom:5.10.0"))
     testImplementation("org.junit.jupiter:junit-jupiter")
 
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.1")
     implementation(kotlin("stdlib-jdk8"))
 
-    implementation("org.jetbrains.research:assertion-generation-agent:1.0.12")
+    implementation("org.jetbrains.research:assertion-generation-agent:1.1.1")
 
-    implementation("ai.koog:koog-agents:0.2.1")
+    // Logging dependencies
+    implementation("org.slf4j:slf4j-api:2.0.17")
+    implementation("ch.qos.logback:logback-classic:1.4.14")
+    implementation("ch.qos.logback:logback-core:1.4.14")
+
+    implementation("org.hibernate:hibernate-core:5.5.0.Beta1")
+    testImplementation("junit:junit:4.+")
 
     // Pitest dependencies
     testImplementation("org.hamcrest:hamcrest:3.0")
@@ -52,7 +65,9 @@ dependencies {
     implementation("org.junit.platform:junit-platform-launcher:1.12.2")
     implementation("org.junit.platform:junit-platform-engine:1.12.2")
     implementation("org.junit.jupiter:junit-jupiter-engine:5.12.2")
+    implementation("org.junit.platform:junit-platform-console:1.12.2")
     implementation("org.opentest4j:opentest4j:1.3.0")
+    api("com.google.guava:guava:32.0.1-android")
 }
 
 tasks.register("copyDependencies", Copy::class) {

@@ -1,7 +1,8 @@
 package dataset.java
 
+import data.ClassTestPair
 import data.PropertiesReader
-import data.ProjectConfiguration
+import data.ProjectConfig
 import dataset.DatasetManager
 import java.io.File
 import kotlinx.serialization.json.Json
@@ -13,11 +14,11 @@ import languages.LanguageConfig
 class JavaDatasetManager : DatasetManager() {
     private val datasetJsonPath = "src/main/resources/java.json"
 
-    override fun setUpProjects(languageConfig: LanguageConfig): List<ProjectConfiguration> {
+    override fun setUpProjects(languageConfig: LanguageConfig): List<ProjectConfig> {
         val json = Json { ignoreUnknownKeys = true }
         val jsonElement = json.parseToJsonElement(File(datasetJsonPath).readText())
 
-        val projectConfigurations = mutableListOf<ProjectConfiguration>()
+        val projectConfigs = mutableListOf<ProjectConfig>()
 
         // Iterate through each project in the JSON array
         for (projectJson in jsonElement.jsonArray) {
@@ -34,7 +35,14 @@ class JavaDatasetManager : DatasetManager() {
                 continue
             }
 
-            val projectConfiguration = ProjectConfiguration(
+            // Extract the target class-test pairs
+            val targetPairs = projectJson.jsonObject["targetPairs"]?.jsonArray?.map { pairJson ->
+                val targetClass = pairJson.jsonObject["targetClass"]?.jsonPrimitive?.content ?: ""
+                val targetTest = pairJson.jsonObject["targetTest"]?.jsonPrimitive?.content ?: ""
+                ClassTestPair(targetClass, targetTest)
+            } ?: emptyList()
+
+            val projectConfig = ProjectConfig(
                 projectName = sourceDir.split("/").last(),
                 github = github,
                 language = languageConfig.name,
@@ -44,34 +52,29 @@ class JavaDatasetManager : DatasetManager() {
                 libraryDependencies = projectJson.jsonObject["libraryDependencies"]?.jsonArray?.map {
                     it.jsonPrimitive.content
                 } ?: emptyList(),
-                targetClasses = projectJson.jsonObject["targetClasses"]?.jsonArray?.map {
-                    it.jsonPrimitive.content
-                } ?: emptyList(),
-                targetTests = projectJson.jsonObject["targetTests"]?.jsonArray?.map {
-                    it.jsonPrimitive.content
-                } ?: emptyList()
+                targetPairs = targetPairs
             )
 
             // Checks a project's build result
-            if (!projectBuild(projectConfiguration).second) continue
+            if (!projectBuild(projectConfig).second) continue
 
             println("> Project \"$projectName\" has been added to the dataset")
-            projectConfigurations.add(projectConfiguration)
+            projectConfigs.add(projectConfig)
         }
 
-        return projectConfigurations
+        return projectConfigs
     }
 
-    override fun projectBuild(projectConfiguration: ProjectConfiguration): Pair<String, Boolean> {
-        removeTargetFiles(projectConfiguration)
+    override fun projectBuild(projectConfig: ProjectConfig): Pair<String, Boolean> {
+        removeTargetFiles(projectConfig)
 
         val result = try {
             val shellCommand = """
-                export JAVA_HOME=${projectConfiguration.languagePath} && ${projectConfiguration.buildTool.buildCommand}
+                export JAVA_HOME=${projectConfig.languagePath} && ${projectConfig.buildTool.buildCommand}
             """.trimIndent()
 
             val process = ProcessBuilder("/bin/sh", "-c", shellCommand)
-                .directory(File(projectConfiguration.sourceDir))
+                .directory(File(projectConfig.sourceDir))
                 .redirectErrorStream(true)
                 .start()
 
@@ -79,7 +82,7 @@ class JavaDatasetManager : DatasetManager() {
 
             process.waitFor()
 
-            val successfulBuildComment = (projectConfiguration.buildTool as JavaBuildTool).successfulBuildComment
+            val successfulBuildComment = (projectConfig.buildTool as JavaBuildTool).successfulBuildComment
 
             if (outputMessage.contains(successfulBuildComment)) {
                 successfulBuildComment
@@ -95,16 +98,16 @@ class JavaDatasetManager : DatasetManager() {
             e.message ?: "Unknown error"
         }
 
-        return Pair(result, result == (projectConfiguration.buildTool as JavaBuildTool).successfulBuildComment)
+        return Pair(result, result == (projectConfig.buildTool as JavaBuildTool).successfulBuildComment)
     }
 
     /**
      * Removes target directories associated with compiled class files from the project source directory.
      *
-     * @param projectConfiguration The project configuration containing information about source directories,
+     * @param projectConfig The project configuration containing information about source directories,
      * dependencies, target classes, and tests.
      */
-    private fun removeTargetFiles(projectConfiguration: ProjectConfiguration) {
-        for (index in 0..1) File("${projectConfiguration.sourceDir}/${projectConfiguration.buildTool.projectDependencies[index]}").deleteRecursively()
+    private fun removeTargetFiles(projectConfig: ProjectConfig) {
+        for (index in 0..1) File("${projectConfig.sourceDir}/${projectConfig.buildTool.projectDependencies[index]}").deleteRecursively()
     }
 }

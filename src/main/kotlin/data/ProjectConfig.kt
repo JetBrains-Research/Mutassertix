@@ -1,6 +1,17 @@
 package data
 
 /**
+ * Represents a pair of target class and its corresponding test class.
+ *
+ * @param targetClass The class to be targeted for mutation testing
+ * @param targetTest The test class that tests the target class
+ */
+data class ClassTestPair(
+    val targetClass: String,
+    val targetTest: String
+)
+
+/**
  * Represents the configuration settings for a project used in mutation testing.
  *
  * @param projectName Name of the project
@@ -10,10 +21,9 @@ package data
  * @param buildTool Build tool used in the project
  * @param languagePath Path to the compiler executable
  * @param libraryDependencies List specifying library dependencies
- * @param targetClasses List specifying which classes to mutate
- * @param targetTests List specifying which tests to run
+ * @param targetPairs List of pairs where each pair contains a target class and its corresponding test
  */
-data class ProjectConfiguration(
+data class ProjectConfig(
     val projectName: String,
     val github: String,
     val language: String,
@@ -21,6 +31,5 @@ data class ProjectConfiguration(
     val buildTool: BuildTool,
     val languagePath: String,
     val libraryDependencies: List<String>,
-    val targetClasses: List<String>,
-    val targetTests: List<String>
+    val targetPairs: List<ClassTestPair>
 )
