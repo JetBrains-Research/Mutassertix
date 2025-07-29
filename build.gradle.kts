@@ -73,7 +73,7 @@ dependencies {
 tasks.register("copyDependencies", Copy::class) {
     group = "build"
 
-    val outputDir = "/Users/arkadii.sapozhnikov/Desktop/Mutassertix/build/libs"
+    val outputDir = layout.buildDirectory.dir("libs").get().asFile.absolutePath
 
     from(configurations.runtimeClasspath.get().files.map { it })
 
