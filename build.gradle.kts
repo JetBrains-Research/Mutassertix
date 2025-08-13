@@ -68,6 +68,13 @@ dependencies {
     implementation("org.junit.platform:junit-platform-console:1.12.2")
     implementation("org.opentest4j:opentest4j:1.3.0")
     api("com.google.guava:guava:32.0.1-android")
+
+    // ProGuard dependencies
+    implementation("org.benf:cfr:0.152")
+    implementation("com.guardsquare:proguard-gradle:7.7.0")
+
+    // JavaParser dependencies
+    implementation("com.github.javaparser:javaparser-core:3.27.0")
 }
 
 tasks.register("copyDependencies", Copy::class) {
@@ -86,6 +93,22 @@ tasks.named("build").configure {
 
 tasks.test {
     useJUnitPlatform()
+}
+
+tasks.register<JavaExec>("extractTargetPairs") {
+    group = "application"
+    description = "Extract target pairs from java.json and compare initial and final versions"
+    
+    classpath = sourceSets["main"].runtimeClasspath
+    mainClass.set("ExtractTargetPairsKt")
+}
+
+tasks.register<JavaExec>("analyzeCodeQuality") {
+    group = "application"
+    description = "Analyze code quality of generated test files"
+    
+    classpath = sourceSets["main"].runtimeClasspath
+    mainClass.set("CodeQualityAnalyzerKt")
 }
 
 kotlin {

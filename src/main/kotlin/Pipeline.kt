@@ -5,6 +5,7 @@ import ai.koog.prompt.executor.model.PromptExecutor
 import data.ProjectConfig
 import java.io.File
 import languages.LanguageConfig
+import mutation.EquivalentMutationDetector
 import mutation.MutationResult
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -21,14 +22,20 @@ object Pipeline {
     ) {
         val processedMutations = HashSet<String>()
 
-        val className = projectConfig.targetPairs[testIndex].targetTest
+        val targetClassName = projectConfig.targetPairs[testIndex].targetClass
+        val targetTestName = projectConfig.targetPairs[testIndex].targetTest
 
-        logger.info("Running pipeline for target test: {}", className)
+        logger.info("Running pipeline for target test: {}", targetTestName)
+
+        // Get the target class file
+        val classFilePath = FilesUtils.findClassFilePath(projectConfig.sourceDir, targetClassName)
+        if (!classFilePath.second) return
+        val classFile = File(classFilePath.first)
 
         // Get the target test file
-        val classFilePath = FilesUtils.findClassFilePath(projectConfig.sourceDir, className)
-        if (!classFilePath.second) return
-        val testFile = File(classFilePath.first)
+        val testClassFilePath = FilesUtils.findClassFilePath(projectConfig.sourceDir, targetTestName)
+        if (!testClassFilePath.second) return
+        val testFile = File(testClassFilePath.first)
 
         while (true) {
             // Run initial mutation pipeline
@@ -39,6 +46,14 @@ object Pipeline {
             var currentMutation: String? = null
             for (mutation in initialMutationResult.survivedMutationList) {
                 if (processedMutations.contains(mutation)) continue
+
+                // Check if the mutation is equivalent to the current class
+                if (EquivalentMutationDetector.detect(executor, classFile, mutation)) {
+                    logger.info("Mutation {} is equivalent to the current class, skipping", mutation)
+                    processedMutations.add(mutation)
+                    continue
+                }
+
                 processedMutations.add(mutation)
                 currentMutation = mutation
                 break
@@ -73,7 +88,7 @@ object Pipeline {
                     projectConfig,
                     executor,
                     testFile,
-                    className,
+                    targetTestName,
                     initialContent
                 )
             ) continue
