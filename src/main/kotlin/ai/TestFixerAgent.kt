@@ -7,10 +7,10 @@ import ai.koog.prompt.dsl.prompt
 import ai.koog.prompt.executor.model.PromptExecutor
 import ai.koog.prompt.markdown.markdown
 import data.ProjectConfig
+import dataset.DatasetManager
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.io.File
-import languages.LanguageConfig
 import org.jetbrains.research.mutassertix.agent.PrivateAgentUtils
 
 /**
@@ -202,7 +202,7 @@ class TestFixerAgent(executor: PromptExecutor) {
      * @return True if the test was fixed, false otherwise.
      */
     suspend fun run(
-        languageConfig: LanguageConfig,
+        datasetManager: DatasetManager,
         projectConfig: ProjectConfig,
         testFilePath: String,
         className: String
@@ -269,7 +269,7 @@ class TestFixerAgent(executor: PromptExecutor) {
 
             logger.info("Agent provided a fix, rebuilding project and running test again")
             // Run the test again to see if it passes
-            languageConfig.datasetManager.projectBuild(projectConfig)
+            datasetManager.projectBuild(projectConfig)
             testOutput = runTest(projectConfig, testFilePath, className)
             logger.debug(
                 "Test output after fix: {}",

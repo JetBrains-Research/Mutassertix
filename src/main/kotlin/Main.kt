@@ -1,7 +1,7 @@
 import data.PropertiesReader
+import dataset.DatasetManager
 import kotlin.time.TimeSource
-import languages.Java
-import languages.LanguageConfig
+import mutation.MutationPipeline
 import org.jetbrains.research.mutassertix.agent.PrivateAgentUtils
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -13,10 +13,11 @@ private val logger: Logger = LoggerFactory.getLogger("Main")
  * Main pipeline implementation
  */
 suspend fun main() {
-    val languageConfig: LanguageConfig = Java()
+    val datasetManager = DatasetManager()
+    val mutationPipeline = MutationPipeline()
 
     // Set up the projects from the dataset
-    val projectConfigurations = languageConfig.datasetManager.setUpProjects(languageConfig)
+    val projectConfigurations = datasetManager.setUpProjects()
 
     // Run an algorithm pipeline for each project for each test file
     for (projectConfiguration in projectConfigurations) {
@@ -28,11 +29,11 @@ suspend fun main() {
         val executor = PrivateAgentUtils.getExecutor(llmClient)
 
         // Calculate the initial mutation score
-        val initialMutationResult = languageConfig.mutationPipeline.run(projectConfiguration).mutationScore
+        val initialMutationResult = mutationPipeline.run(projectConfiguration).mutationScore
 
         // Run a pipeline for each test file
         for (testIndex in projectConfiguration.targetPairs.indices) {
-            Pipeline.run(languageConfig, projectConfiguration, executor, testIndex)
+            Pipeline.run(datasetManager, mutationPipeline, projectConfiguration, executor, testIndex)
         }
 
         // Log the time
@@ -43,7 +44,7 @@ suspend fun main() {
         logger.info("Quota: {}", PrivateAgentUtils.getQuota(llmClient))
 
         // Report the results
-        val finalMutationResult = languageConfig.mutationPipeline. run(projectConfiguration).mutationScore
+        val finalMutationResult = mutationPipeline. run(projectConfiguration).mutationScore
         logger.info("Result: {}", "${projectConfiguration.projectName}\t$initialMutationResult\t$finalMutationResult\n")
 
         // Cache the project
