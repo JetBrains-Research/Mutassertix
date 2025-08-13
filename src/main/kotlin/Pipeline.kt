@@ -3,9 +3,10 @@ import ai.ProjectBuildFixerAgent
 import ai.TestFixerAgent
 import ai.koog.prompt.executor.model.PromptExecutor
 import data.ProjectConfig
+import dataset.DatasetManager
 import java.io.File
-import languages.LanguageConfig
 import mutation.EquivalentMutationDetector
+import mutation.MutationPipeline
 import mutation.MutationResult
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -15,7 +16,8 @@ object Pipeline {
     private val logger: Logger = LoggerFactory.getLogger(Pipeline::class.java)
 
     suspend fun run(
-        languageConfig: LanguageConfig,
+        datasetManager: DatasetManager,
+        mutationPipeline: MutationPipeline,
         projectConfig: ProjectConfig,
         executor: PromptExecutor,
         testIndex: Int
@@ -39,7 +41,7 @@ object Pipeline {
 
         while (true) {
             // Run initial mutation pipeline
-            val initialMutationResult = runInitialMutationPipeline(languageConfig, projectConfig, testIndex)
+            val initialMutationResult = runInitialMutationPipeline(mutationPipeline, projectConfig, testIndex)
             if (initialMutationResult.mutationScore == 100) return
 
             // Get the next mutation to process
@@ -67,7 +69,7 @@ object Pipeline {
 
             // Run assertion generation agent
             if (!runAssertionGenerationAgent(
-                    languageConfig,
+                    datasetManager,
                     projectConfig,
                     currentMutation,
                     executor,
@@ -80,11 +82,11 @@ object Pipeline {
             }
 
             // Fix compilation errors
-            if (!fixCompilationErrors(languageConfig, projectConfig, executor, testFile, initialContent)) continue
+            if (!fixCompilationErrors(datasetManager, projectConfig, executor, testFile, initialContent)) continue
 
             // Run test fixer agent
             if (!runTestFixerAgent(
-                    languageConfig,
+                    datasetManager,
                     projectConfig,
                     executor,
                     testFile,
@@ -97,38 +99,43 @@ object Pipeline {
             logger.debug("Final content:\n{}", testFile.readText())
 
             // Run the final mutation pipeline and check if the score improved
-            val finalMutationResult = languageConfig.mutationPipeline.run(projectConfig, testIndex)
+            val finalMutationResult = mutationPipeline.run(projectConfig, testIndex)
             if (finalMutationResult.mutationScore < initialMutationResult.mutationScore) {
                 testFile.writeText(initialContent)
-                languageConfig.datasetManager.projectBuild(projectConfig)
+                datasetManager.projectBuild(projectConfig)
             }
         }
     }
 
     /**
-     * Runs the initial mutation pipeline and checks if the mutation score is 100%.
+     * Executes the initial mutation pipeline using the provided mutation pipeline, project configuration,
+     * and test index.
      *
-     * @param languageConfig The language configuration.
-     * @param projectConfig The project configuration.
-     * @param testIndex The index of the target test.
-     * @return The mutation result if score is less than 100%, null otherwise.
+     * @param mutationPipeline The mutation pipeline to be executed.
+     * @param projectConfig The configuration of the project used during the mutation pipeline execution.
+     * @param testIndex The index of the test case to be processed within the mutation pipeline.
+     * @return The result of the mutation pipeline execution.
      */
     private fun runInitialMutationPipeline(
-        languageConfig: LanguageConfig,
+        mutationPipeline: MutationPipeline,
         projectConfig: ProjectConfig,
         testIndex: Int
-    ): MutationResult = languageConfig.mutationPipeline.run(projectConfig, testIndex)
+    ): MutationResult = mutationPipeline.run(projectConfig, testIndex)
 
     /**
-     * Runs the assertion generation agent for each mutation in the list.
+     * Executes the assertion generation agent to analyze a mutation and generate assertions based on the provided configuration and test details.
      *
-     * @param projectConfig The project configuration.
-     * @param mutation The mutation to process.
-     * @param executor The prompt executor.
-     * @return True if at least one mutation was processed successfully, false otherwise.
+     * @param datasetManager An instance of DatasetManager that provides access to necessary datasets.
+     * @param projectConfig The configuration for the project used during assertion generation.
+     * @param mutation The mutation string that describes the changes to be analyzed.
+     * @param executor The PromptExecutor used to execute the assertion generation tasks.
+     * @param testIndex The index of the test case for which assertions are being generated.
+     * @param testFile A file instance pointing to the test file associated with the generation process.
+     * @param initialContent The initial content of the test file before any modifications.
+     * @return A Boolean indicating whether the assertion generation process succeeded or not.
      */
     private suspend fun runAssertionGenerationAgent(
-        languageConfig: LanguageConfig,
+        datasetManager: DatasetManager,
         projectConfig: ProjectConfig,
         mutation: String,
         executor: PromptExecutor,
@@ -138,13 +145,13 @@ object Pipeline {
     ): Boolean {
         logger.info("Running assertion generation agent")
         val result = AssertionGenerationAgent(executor).run(projectConfig, mutation, testIndex)
-        return processAgentResult(result, languageConfig, projectConfig, testFile, initialContent)
+        return processAgentResult(result, datasetManager, projectConfig, testFile, initialContent)
     }
 
     /**
      * Fixes compilation errors in the project.
      *
-     * @param languageConfig The language configuration.
+     * @param datasetManager The manager responsible for handling datasets and project configurations.
      * @param projectConfig The project configuration.
      * @param executor The prompt executor.
      * @param testFile The test file.
@@ -152,33 +159,34 @@ object Pipeline {
      * @return True if compilation errors were fixed or there were none, false otherwise.
      */
     private suspend fun fixCompilationErrors(
-        languageConfig: LanguageConfig,
+        datasetManager: DatasetManager,
         projectConfig: ProjectConfig,
         executor: PromptExecutor,
         testFile: File,
         initialContent: String
     ): Boolean {
         val result = ProjectBuildFixerAgent(executor).run(
-            languageConfig,
+            datasetManager,
             projectConfig,
             testFile.path,
         )
-        return processAgentResult(result, languageConfig, projectConfig, testFile, initialContent)
+        return processAgentResult(result, datasetManager, projectConfig, testFile, initialContent)
     }
 
     /**
-     * Runs the test fixer agent to fix failing tests.
+     * Executes the TestFixerAgent for a given test file, processes its result, and determines whether
+     * the operation was successful.
      *
-     * @param languageConfig The language configuration.
-     * @param projectConfig The project configuration.
-     * @param executor The prompt executor.
-     * @param testFile The test file.
-     * @param className The name of the target test.
-     * @param initialContent The initial content of the test file.
-     * @return True if tests were fixed or there were no failing tests, false otherwise.
+     * @param datasetManager The manager responsible for handling datasets and project configurations.
+     * @param projectConfig The configuration details of the project being tested.
+     * @param executor The executor responsible for executing prompt-based operations.
+     * @param testFile The test file to be processed by the TestFixerAgent.
+     * @param className The name of the class associated with the test file.
+     * @param initialContent The initial content of the test file prior to processing.
+     * @return A Boolean value indicating whether the TestFixerAgent executed successfully.
      */
     private suspend fun runTestFixerAgent(
-        languageConfig: LanguageConfig,
+        datasetManager: DatasetManager,
         projectConfig: ProjectConfig,
         executor: PromptExecutor,
         testFile: File,
@@ -187,27 +195,19 @@ object Pipeline {
     ): Boolean {
         logger.info("Running test fixer agent")
         val result = TestFixerAgent(executor).run(
-            languageConfig,
+            datasetManager,
             projectConfig,
             testFile.path,
             className,
         )
-        return processAgentResult(result, languageConfig, projectConfig, testFile, initialContent)
+        return processAgentResult(result, datasetManager, projectConfig, testFile, initialContent)
     }
 
     /**
-     * Processes the result of an agent's operation and manages the provided configurations and test file.
-     *
-     * @param agentResult A boolean indicating the outcome of the agent's result.
-     * @param languageConfig The language configuration used for dataset management and project building.
-     * @param projectConfig The configuration details of the project being processed.
-     * @param testFile The file that may be updated based on the agent's result.
-     * @param initialContent The initial content to revert to, in case the agent's result is false.
-     * @return A boolean value of the agent result indicating success or failure.
-     */
+     * Processes the result from an agent by potentially*/
     private fun processAgentResult(
         agentResult: Boolean,
-        languageConfig: LanguageConfig,
+        datasetManager: DatasetManager,
         projectConfig: ProjectConfig,
         testFile: File,
         initialContent: String
@@ -215,7 +215,7 @@ object Pipeline {
         if (!agentResult) {
             testFile.writeText(initialContent)
         }
-        languageConfig.datasetManager.projectBuild(projectConfig)
+        datasetManager.projectBuild(projectConfig)
         return agentResult
     }
 }

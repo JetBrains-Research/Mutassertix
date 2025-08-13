@@ -7,7 +7,7 @@ import ai.koog.prompt.dsl.prompt
 import ai.koog.prompt.executor.model.PromptExecutor
 import ai.koog.prompt.markdown.markdown
 import data.ProjectConfig
-import languages.LanguageConfig
+import dataset.DatasetManager
 import org.jetbrains.research.mutassertix.agent.PrivateAgentUtils
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -53,12 +53,12 @@ class ProjectBuildFixerAgent(executor: PromptExecutor) {
     }
 
     suspend fun run(
-        languageConfig: LanguageConfig,
+        datasetManager: DatasetManager,
         projectConfig: ProjectConfig,
         filePath: String,
     ): Boolean {
         repeat(numberOfIterations) {
-            val projectBuildResult = languageConfig.datasetManager.projectBuild(projectConfig)
+            val projectBuildResult = datasetManager.projectBuild(projectConfig)
             if (projectBuildResult.second) return true
             val buildOutput = projectBuildResult.first
             try {
@@ -82,6 +82,6 @@ class ProjectBuildFixerAgent(executor: PromptExecutor) {
             }
         }
 
-        return languageConfig.datasetManager.projectBuild(projectConfig).second
+        return datasetManager.projectBuild(projectConfig).second
     }
 }

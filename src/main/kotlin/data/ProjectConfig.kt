@@ -1,5 +1,7 @@
 package data
 
+import dataset.BuildTool
+
 /**
  * Represents a pair of target class and its corresponding test class.
  *

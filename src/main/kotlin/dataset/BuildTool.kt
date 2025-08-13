@@ -1,12 +1,13 @@
-package dataset.java
-
-import data.BuildTool
+package dataset
 
 /**
  * Represents an abstract build tool for Java-based projects.
  */
-abstract class JavaBuildTool : BuildTool {
+abstract class BuildTool {
     abstract val successfulBuildComment: String
+    abstract val name: String
+    abstract val projectDependencies: List<String>
+    abstract val buildCommand: String
 
     companion object {
         /**
@@ -38,7 +39,7 @@ class Gradle(
     override val projectDependencies: List<String> = listOf("build/classes/java/main", "build/classes/java/test"),
     override val buildCommand: String = "./gradlew build",
     override val successfulBuildComment: String = "BUILD SUCCESSFUL"
-) : JavaBuildTool()
+) : BuildTool()
 
 /**
  * Represents the Maven build tool.
@@ -54,4 +55,4 @@ class Maven(
     override val projectDependencies: List<String> = listOf("target/classes", "target/test-classes"),
     override val buildCommand: String = "mvn clean install",
     override val successfulBuildComment: String = "BUILD SUCCESS"
-) : JavaBuildTool()
+) : BuildTool()
