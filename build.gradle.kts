@@ -98,7 +98,7 @@ tasks.test {
 tasks.register<JavaExec>("extractTargetPairs") {
     group = "application"
     description = "Extract target pairs from java.json and compare initial and final versions"
-    
+
     classpath = sourceSets["main"].runtimeClasspath
     mainClass.set("ExtractTargetPairsKt")
 }
@@ -106,7 +106,7 @@ tasks.register<JavaExec>("extractTargetPairs") {
 tasks.register<JavaExec>("analyzeCodeQuality") {
     group = "application"
     description = "Analyze code quality of generated test files"
-    
+
     classpath = sourceSets["main"].runtimeClasspath
     mainClass.set("CodeQualityAnalyzerKt")
 }

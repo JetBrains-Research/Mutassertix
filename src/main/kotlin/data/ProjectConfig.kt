@@ -14,6 +14,17 @@ data class ClassTestPair(
 )
 
 /**
+ * Represents a pair of target class and its corresponding test class.
+ *
+ * @param targetClass The class to be targeted for mutation testing
+ * @param targetTest The test class that tests the target class
+ */
+data class ClassTestPair(
+    val targetClass: String,
+    val targetTest: String
+)
+
+/**
  * Represents the configuration settings for a project used in mutation testing.
  *
  * @param projectName Name of the project
