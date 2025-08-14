@@ -38,7 +38,7 @@ class Gradle(
     override val name: String = "gradle",
     override val projectDependencies: List<String> = listOf("build/classes/java/main", "build/classes/java/test"),
     override val buildCommand: String = "./gradlew build",
-    override val successfulBuildComment: String = "BUILD SUCCESSFUL"
+    override val successfulBuildComment: String = "BUILD SUCCESSFUL",
 ) : BuildTool()
 
 /**
@@ -54,5 +54,5 @@ class Maven(
     override val name: String = "maven",
     override val projectDependencies: List<String> = listOf("target/classes", "target/test-classes"),
     override val buildCommand: String = "mvn clean install",
-    override val successfulBuildComment: String = "BUILD SUCCESS"
+    override val successfulBuildComment: String = "BUILD SUCCESS",
 ) : BuildTool()

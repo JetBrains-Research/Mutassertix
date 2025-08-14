@@ -50,7 +50,7 @@ object Pipeline {
                 if (processedMutations.contains(mutation)) continue
 
                 // Check if the mutation is equivalent to the current class
-                if (EquivalentMutationDetector.detect(executor, classFile, mutation)) {
+                if (EquivalentMutationDetector.detect(projectConfig, executor, classFile, mutation)) {
                     logger.info("Mutation {} is equivalent to the current class, skipping", mutation)
                     processedMutations.add(mutation)
                     continue

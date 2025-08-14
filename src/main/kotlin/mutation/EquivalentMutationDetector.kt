@@ -4,6 +4,7 @@ import ai.MutationApplyingAgent
 import ai.koog.prompt.executor.model.PromptExecutor
 import com.github.javaparser.JavaParser
 import com.github.javaparser.ast.visitor.NoCommentEqualsVisitor
+import data.ProjectConfig
 import java.io.BufferedReader
 import java.io.File
 import java.io.InputStreamReader
@@ -20,8 +21,17 @@ import org.slf4j.LoggerFactory
 object EquivalentMutationDetector {
     private val logger: Logger = LoggerFactory.getLogger(EquivalentMutationDetector::class.java)
 
-    fun detect(executor: PromptExecutor, codeFilePath: File, mutationDescription: String): Boolean {
-        logger.info("Starting mutation equivalence detection for file: {}, mutation: {}", codeFilePath.name, mutationDescription)
+    fun detect(
+        projectConfig: ProjectConfig,
+        executor: PromptExecutor,
+        codeFilePath: File,
+        mutationDescription: String
+    ): Boolean {
+        logger.info(
+            "Starting mutation equivalence detection for file: {}, mutation: {}",
+            codeFilePath.name,
+            mutationDescription
+        )
 
         logger.info("Applying mutation...")
         val mutantCode = runBlocking {
@@ -38,24 +48,35 @@ object EquivalentMutationDetector {
         val initialCode = codeFilePath.readText()
         if (initialCode == mutantCode) return false
 
-        val result = detectCodeEquivalence(codeFilePath, initialCode, mutantCode)
+        val result = detectCodeEquivalence(projectConfig, codeFilePath, initialCode, mutantCode)
         logger.info("Mutation equivalence detection result: {}", if (result) "EQUIVALENT" else "NOT EQUIVALENT")
         return result
     }
 
-    private fun detectCodeEquivalence(codeFilePath: File,  initialCode: String, mutantCode: String): Boolean {
+    private fun detectCodeEquivalence(
+        projectConfig: ProjectConfig,
+        codeFilePath: File,
+        initialCode: String,
+        mutantCode: String
+    ): Boolean {
         logger.debug("Detecting code equivalence between initial code and mutant code")
 
-        val transformedMutantCode = applyProGuardTransformations(codeFilePath, mutantCode)
+        val transformedMutantCode =
+            applyProGuardTransformations(projectConfig, codeFilePath, mutantCode)
 
         logger.debug("Applying ProGuard transformations to initial code")
-        val transformedInitialCode = applyProGuardTransformations(codeFilePath, initialCode)
+        val transformedInitialCode =
+            applyProGuardTransformations(projectConfig, codeFilePath, initialCode)
 
         logger.debug("Checking equality between transformed codes")
         return equalCodeCheck(transformedInitialCode, transformedMutantCode)
     }
 
-    private fun applyProGuardTransformations(codeFilePath: File, javaCode: String): String {
+    private fun applyProGuardTransformations(
+        projectConfig: ProjectConfig,
+        codeFilePath: File,
+        javaCode: String
+    ): String {
         logger.debug("Starting ProGuard transformations on Java code")
 
         codeFilePath.writeText(javaCode)
@@ -87,7 +108,14 @@ object EquivalentMutationDetector {
 
             // Compile the Java file with the classpath set to the input directory
             logger.info("Compiling Java file: {}", codeFilePath)
-            val compileProcess = ProcessBuilder("javac", "-d", inputDir.toString(), codeFilePath.toString())
+            val compileProcess = ProcessBuilder(
+                "javac",
+                "-d",
+                inputDir.toString(),
+                "-cp",
+                buildClasspath(projectConfig),
+                codeFilePath.toString()
+            )
                 .redirectErrorStream(true)
                 .start()
 
@@ -182,7 +210,10 @@ object EquivalentMutationDetector {
             logger.debug("Found {} processed class files", processedClassFiles.size)
 
             val targetClassFile = if (processedClassFiles.size > 1) {
-                logger.debug("Multiple class files found, searching for the one matching class name: {}", actualClassName)
+                logger.debug(
+                    "Multiple class files found, searching for the one matching class name: {}",
+                    actualClassName
+                )
                 processedClassFiles.find {
                     it.fileName.toString().startsWith(actualClassName) ||
                             it.fileName.toString().contains(actualClassName, ignoreCase = true)
@@ -223,7 +254,7 @@ object EquivalentMutationDetector {
 
     private fun decompileWithCFR(classFilePath: String): String {
         logger.debug("Starting decompilation of class file: {}", classFilePath)
-        
+
         val cfrJarPath = System.getProperty("java.class.path")
             .split(File.pathSeparator)
             .find { it.contains("cfr") }
@@ -294,7 +325,7 @@ object EquivalentMutationDetector {
 
     private fun equalCodeCheck(initialCode: String, mutantCode: String): Boolean {
         logger.debug("Performing equality check between initial code and mutant code")
-        
+
         logger.debug("Configuring JavaParser")
         val parser = JavaParser()
         parser.parserConfiguration
@@ -316,19 +347,31 @@ object EquivalentMutationDetector {
         logger.debug("Parsing mutant code")
         val mutantCodeParseResult: com.github.javaparser.ParseResult<com.github.javaparser.ast.CompilationUnit> =
             parser.parse(mutantCode)
-            
+
         if (!mutantCodeParseResult.isSuccessful) {
             logger.error("Failed to parse mutant code: {}", mutantCodeParseResult.problems)
             return false
         }
         logger.debug("Mutant code parsed successfully")
-        
+
         val mutantCodeCU: com.github.javaparser.ast.CompilationUnit = mutantCodeParseResult.getResult().get()
 
         logger.debug("Comparing ASTs using NoCommentEqualsVisitor")
         val result = NoCommentEqualsVisitor.equals(initialCodeCU, mutantCodeCU)
         logger.debug("AST comparison result: {}", if (result) "EQUAL" else "NOT EQUAL")
-        
+
         return result
+    }
+
+    private fun buildClasspath(
+        projectConfig: ProjectConfig,
+    ): String {
+        val libFolder = "build/libs"
+
+        val projectDependencies = projectConfig.buildTool.projectDependencies.map { "${projectConfig.sourceDir}/$it" }
+        val libraryDependencies =
+            projectConfig.libraryDependencies.map { it.split("/").last() }.map { "$libFolder/$it" }
+
+        return (projectDependencies + libraryDependencies).joinToString(":")
     }
 }
