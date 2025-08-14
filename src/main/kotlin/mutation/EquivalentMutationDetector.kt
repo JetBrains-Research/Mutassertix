@@ -10,6 +10,7 @@ import java.io.InputStreamReader
 import java.nio.charset.StandardCharsets
 import java.nio.file.Files
 import java.nio.file.Paths
+import kotlin.io.path.Path
 import kotlin.io.path.createTempDirectory
 import kotlin.io.path.exists
 import kotlinx.coroutines.runBlocking
@@ -19,14 +20,12 @@ import org.slf4j.LoggerFactory
 object EquivalentMutationDetector {
     private val logger: Logger = LoggerFactory.getLogger(EquivalentMutationDetector::class.java)
 
-    fun detect(executor: PromptExecutor, initialCodeFilePath: File, mutationDescription: String): Boolean {
-        logger.info("Starting mutation equivalence detection for file: {}, mutation: {}", initialCodeFilePath.name, mutationDescription)
-        val initialCode = initialCodeFilePath.readText()
-        logger.debug("Read initial code, length: {} characters", initialCode.length)
+    fun detect(executor: PromptExecutor, codeFilePath: File, mutationDescription: String): Boolean {
+        logger.info("Starting mutation equivalence detection for file: {}, mutation: {}", codeFilePath.name, mutationDescription)
 
         logger.info("Applying mutation...")
         val mutantCode = runBlocking {
-            MutationApplyingAgent(executor).applyMutation(initialCodeFilePath, mutationDescription)
+            MutationApplyingAgent(executor).applyMutation(codeFilePath, mutationDescription)
         }
 
         if (mutantCode == null) {
@@ -36,32 +35,36 @@ object EquivalentMutationDetector {
         logger.debug("Mutation applied successfully, mutant code length: {} characters", mutantCode.length)
 
         // Unsuccessful to change the code
+        val initialCode = codeFilePath.readText()
         if (initialCode == mutantCode) return false
 
-        val result = detectCodeEquivalence(initialCode, mutantCode)
+        val result = detectCodeEquivalence(codeFilePath, initialCode, mutantCode)
         logger.info("Mutation equivalence detection result: {}", if (result) "EQUIVALENT" else "NOT EQUIVALENT")
         return result
     }
 
-    private fun detectCodeEquivalence(initialCode: String, mutantCode: String): Boolean {
+    private fun detectCodeEquivalence(codeFilePath: File,  initialCode: String, mutantCode: String): Boolean {
         logger.debug("Detecting code equivalence between initial code and mutant code")
-        
+
+        val transformedMutantCode = applyProGuardTransformations(codeFilePath, mutantCode)
+
         logger.debug("Applying ProGuard transformations to initial code")
-        val transformedInitialCode = applyProGuardTransformations(initialCode)
-        
-        logger.debug("Applying ProGuard transformations to mutant code")
-        val transformedMutantCode = applyProGuardTransformations(mutantCode)
+        val transformedInitialCode = applyProGuardTransformations(codeFilePath, initialCode)
 
         logger.debug("Checking equality between transformed codes")
         return equalCodeCheck(transformedInitialCode, transformedMutantCode)
     }
 
-    private fun applyProGuardTransformations(javaCode: String): String {
+    private fun applyProGuardTransformations(codeFilePath: File, javaCode: String): String {
         logger.debug("Starting ProGuard transformations on Java code")
-        val tempDir = createTempDirectory("proguard_temp")
-        logger.debug("Created temporary directory: {}", tempDir)
-        val inputDir = Files.createDirectory(tempDir.resolve("input"))
-        val outputDir = Files.createDirectory(tempDir.resolve("output"))
+
+        codeFilePath.writeText(javaCode)
+        val fileDirFile = codeFilePath.parentFile
+        val fileDirPath = Path(fileDirFile.path)
+
+        val inputDir = Files.createDirectory(fileDirPath.resolve("input"))
+        val outputDir = Files.createDirectory(fileDirPath.resolve("output"))
+        val configFile = fileDirPath.resolve("proguard.config")
 
         try {
             // Extract the package name from the code
@@ -69,18 +72,7 @@ object EquivalentMutationDetector {
             val packageRegex = "package\\s+([\\w.]+)".toRegex()
             val packageMatch = packageRegex.find(javaCode)
             val packageName = packageMatch?.groupValues?.get(1) ?: ""
-            logger.debug("Extracted package name: {}", if (packageName.isEmpty()) "<empty>" else packageName)
-
-            // Create a package directory structure if needed
-            logger.debug("Creating package directory structure")
-            val packagePath = if (packageName.isNotEmpty()) {
-                val packageDir = inputDir.resolve(packageName.replace('.', '/'))
-                Files.createDirectories(packageDir)
-                packageDir
-            } else {
-                inputDir
-            }
-            logger.debug("Package path: {}", packagePath)
+            logger.debug("Extracted package name: {}", packageName.ifEmpty { "<empty>" })
 
             // Extract the class name from the code
             logger.debug("Extracting class name from code")
@@ -93,14 +85,9 @@ object EquivalentMutationDetector {
             val actualClassName = classMatch.groupValues[1]
             logger.debug("Extracted class name: {}", actualClassName)
 
-            // Write the Java file to the correct package location
-            logger.debug("Writing Java file to: {}", packagePath.resolve("$actualClassName.java"))
-            val javaFile = packagePath.resolve("$actualClassName.java")
-            Files.write(javaFile, javaCode.toByteArray())
-
             // Compile the Java file with the classpath set to the input directory
-            logger.info("Compiling Java file: {}", javaFile)
-            val compileProcess = ProcessBuilder("javac", "-d", inputDir.toString(), javaFile.toString())
+            logger.info("Compiling Java file: {}", codeFilePath)
+            val compileProcess = ProcessBuilder("javac", "-d", inputDir.toString(), codeFilePath.toString())
                 .redirectErrorStream(true)
                 .start()
 
@@ -115,7 +102,6 @@ object EquivalentMutationDetector {
 
             // Prepare the config file
             logger.debug("Preparing ProGuard configuration file")
-            val configFile = tempDir.resolve("proguard.config")
 
             val configContent = """
                 -injars ${inputDir.toAbsolutePath()}
@@ -158,14 +144,6 @@ object EquivalentMutationDetector {
                 -useuniqueclassmembernames
                 -dontusemixedcaseclassnames
                 -flattenpackagehierarchy '${packageName}'
-                
-                # Keep specific methods for demonstration
-                -keepclassmembers class * {
-                    void append(...);
-                    void delete(...);
-                    java.lang.String toString();
-                    int length();
-                }
             """.trimIndent()
 
             Files.write(configFile, configContent.toByteArray())
@@ -231,10 +209,15 @@ object EquivalentMutationDetector {
             return "Error: ${e.message}"
         } finally {
             // Clean up temporary files
-            logger.debug("Cleaning up temporary files in: {}", tempDir)
-            Files.walk(tempDir)
+            logger.debug("Cleaning up temporary directories and files")
+            Files.walk(inputDir)
                 .sorted(Comparator.reverseOrder())
                 .forEach { Files.deleteIfExists(it) }
+            Files.walk(outputDir)
+                .sorted(Comparator.reverseOrder())
+                .forEach { Files.deleteIfExists(it) }
+            Files.deleteIfExists(configFile)
+            logger.debug("Cleanup completed")
         }
     }
 
