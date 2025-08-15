@@ -88,50 +88,96 @@ object EquivalentMutationDetector {
         val configFile = fileDirPath.resolve("proguard.config")
 
         try {
-            // Extract the package name from the code
-            logger.debug("Extracting package name from code")
-            val packageRegex = "package\\s+([\\w.]+)".toRegex()
-            val packageMatch = packageRegex.find(javaCode)
-            val packageName = packageMatch?.groupValues?.get(1) ?: ""
-            logger.debug("Extracted package name: {}", packageName.ifEmpty { "<empty>" })
+            val packageName = extractPackageName(javaCode)
+            val actualClassName = extractClassName(javaCode)
+                ?: return "Error: Could not extract class name from code"
 
-            // Extract the class name from the code
-            logger.debug("Extracting class name from code")
-            val classRegex = "class\\s+(\\w+)".toRegex()
-            val classMatch = classRegex.find(javaCode)
-            if (classMatch == null) {
-                logger.error("Failed to extract class name from code")
-                return "Error: Could not extract class name from code"
+            val compileError = compileJava(projectConfig, codeFilePath, inputDir)
+            if (compileError != null) return compileError
+
+            val configContent = buildProguardConfigContent(packageName, actualClassName, inputDir, outputDir)
+            writeProguardConfig(configFile, configContent)
+
+            val proguardError = runProguard(configFile)
+            if (proguardError != null) return proguardError
+
+            val processedClassFiles = listProcessedClassFiles(outputDir)
+            if (processedClassFiles.isEmpty()) return "No processed class files found"
+
+            val targetClassFile = selectTargetClassFile(processedClassFiles, actualClassName)
+
+            val decompiled = decompileWithCFR(targetClassFile.toString())
+            if (decompiled.startsWith("Error:") || decompiled.startsWith("CFR decompilation failed:")) {
+                logger.error("Decompilation failed: {}", decompiled)
+            } else {
+                logger.debug("Decompilation successful, code length: {} characters", decompiled.length)
             }
-            val actualClassName = classMatch.groupValues[1]
-            logger.debug("Extracted class name: {}", actualClassName)
+            return decompiled
+        } catch (e: Exception) {
+            logger.error("Error during ProGuard transformations", e)
+            return "Error: ${e.message}"
+        } finally {
+            logger.debug("Cleaning up temporary directories and files")
+            cleanupPathTree(inputDir)
+            cleanupPathTree(outputDir)
+            Files.deleteIfExists(configFile)
+            logger.debug("Cleanup completed")
+        }
+    }
 
-            // Compile the Java file with the classpath set to the input directory
-            logger.info("Compiling Java file: {}", codeFilePath)
-            val compileProcess = ProcessBuilder(
-                "javac",
-                "-d",
-                inputDir.toString(),
-                "-cp",
-                buildClasspath(projectConfig),
-                codeFilePath.toString()
-            )
-                .redirectErrorStream(true)
-                .start()
+    private fun extractPackageName(javaCode: String): String {
+        logger.debug("Extracting package name from code")
+        val packageRegex = "package\\s+([\\w.]+)".toRegex()
+        val packageMatch = packageRegex.find(javaCode)
+        val packageName = packageMatch?.groupValues?.get(1) ?: ""
+        logger.debug("Extracted package name: {}", packageName.ifEmpty { "<empty>" })
+        return packageName
+    }
 
-            val compileOutput = BufferedReader(InputStreamReader(compileProcess.inputStream)).readText()
-            compileProcess.waitFor()
+    private fun extractClassName(javaCode: String): String? {
+        logger.debug("Extracting class name from code")
+        val classRegex = "class\\s+(\\w+)".toRegex()
+        val classMatch = classRegex.find(javaCode)
+        if (classMatch == null) {
+            logger.error("Failed to extract class name from code")
+            return null
+        }
+        val actualClassName = classMatch.groupValues[1]
+        logger.debug("Extracted class name: {}", actualClassName)
+        return actualClassName
+    }
 
-            if (compileProcess.exitValue() != 0) {
-                logger.error("Compilation failed: {}", compileOutput)
-                return "Compilation failed: $compileOutput"
-            }
+    private fun compileJava(projectConfig: ProjectConfig, codeFilePath: File, inputDir: java.nio.file.Path): String? {
+        logger.info("Compiling Java file: {}", codeFilePath)
+        val compileProcess = ProcessBuilder(
+            "javac",
+            "-d",
+            inputDir.toString(),
+            "-cp",
+            buildClasspath(projectConfig),
+            codeFilePath.toString()
+        ).redirectErrorStream(true).start()
+
+        val compileOutput = BufferedReader(InputStreamReader(compileProcess.inputStream)).readText()
+        compileProcess.waitFor()
+
+        return if (compileProcess.exitValue() != 0) {
+            logger.error("Compilation failed: {}", compileOutput)
+            "Compilation failed: $compileOutput"
+        } else {
             logger.debug("Compilation successful")
+            null
+        }
+    }
 
-            // Prepare the config file
-            logger.debug("Preparing ProGuard configuration file")
-
-            val configContent = """
+    private fun buildProguardConfigContent(
+        packageName: String,
+        actualClassName: String,
+        inputDir: java.nio.file.Path,
+        outputDir: java.nio.file.Path,
+    ): String {
+        logger.debug("Preparing ProGuard configuration file")
+        return """
                 -injars ${inputDir.toAbsolutePath()}
                 -outjars ${outputDir.toAbsolutePath()}
             
@@ -171,85 +217,69 @@ object EquivalentMutationDetector {
                 -mergeinterfacesaggressively
                 -useuniqueclassmembernames
                 -dontusemixedcaseclassnames
-                -flattenpackagehierarchy '${packageName}'
+                -flattenpackagehierarchy '$packageName'
             """.trimIndent()
+    }
 
-            Files.write(configFile, configContent.toByteArray())
-            logger.debug("ProGuard configuration file created at: {}", configFile)
+    private fun writeProguardConfig(configFile: java.nio.file.Path, content: String) {
+        Files.write(configFile, content.toByteArray())
+        logger.debug("ProGuard configuration file created at: {}", configFile)
+    }
 
-            // Run ProGuard
-            logger.info("Running ProGuard")
-            val proguardJar = Paths.get("proguard-7.7.0/lib/proguard.jar").toAbsolutePath()
-            if (!proguardJar.exists()) {
-                logger.error("ProGuard JAR not found at: {}", proguardJar)
-                return "ProGuard JAR not found at: $proguardJar"
-            }
-
-            val proguardProcess = ProcessBuilder(
-                "java", "-jar", proguardJar.toString(), "@${configFile.toAbsolutePath()}"
-            ).redirectErrorStream(true).start()
-
-            val proguardOutput = BufferedReader(InputStreamReader(proguardProcess.inputStream)).readText()
-            proguardProcess.waitFor()
-
-            if (proguardProcess.exitValue() != 0) {
-                logger.error("ProGuard processing failed: {}", proguardOutput)
-                return "ProGuard processing failed: $proguardOutput"
-            }
-            logger.debug("ProGuard processing successful")
-
-            logger.debug("Looking for processed class files in: {}", outputDir)
-            val processedClassFiles = Files.walk(outputDir)
-                .filter { it.toString().endsWith(".class") }
-                .toList()
-
-            if (processedClassFiles.isEmpty()) {
-                logger.error("No processed class files found in output directory")
-                return "No processed class files found"
-            }
-            logger.debug("Found {} processed class files", processedClassFiles.size)
-
-            val targetClassFile = if (processedClassFiles.size > 1) {
-                logger.debug(
-                    "Multiple class files found, searching for the one matching class name: {}",
-                    actualClassName
-                )
-                processedClassFiles.find {
-                    it.fileName.toString().startsWith(actualClassName) ||
-                            it.fileName.toString().contains(actualClassName, ignoreCase = true)
-                } ?: processedClassFiles[0]
-            } else {
-                processedClassFiles[0]
-            }
-            logger.debug("Selected target class file: {}", targetClassFile)
-
-            // Use CFR to decompile the class file to Java source code
-            logger.info("Decompiling class file to Java source code")
-            val classFilePath = targetClassFile.toString()
-            val decompiled = decompileWithCFR(classFilePath)
-
-            if (decompiled.startsWith("Error:") || decompiled.startsWith("CFR decompilation failed:")) {
-                logger.error("Decompilation failed: {}", decompiled)
-            } else {
-                logger.debug("Decompilation successful, code length: {} characters", decompiled.length)
-            }
-
-            return decompiled
-        } catch (e: Exception) {
-            logger.error("Error during ProGuard transformations", e)
-            return "Error: ${e.message}"
-        } finally {
-            // Clean up temporary files
-            logger.debug("Cleaning up temporary directories and files")
-            Files.walk(inputDir)
-                .sorted(Comparator.reverseOrder())
-                .forEach { Files.deleteIfExists(it) }
-            Files.walk(outputDir)
-                .sorted(Comparator.reverseOrder())
-                .forEach { Files.deleteIfExists(it) }
-            Files.deleteIfExists(configFile)
-            logger.debug("Cleanup completed")
+    private fun runProguard(configFile: java.nio.file.Path): String? {
+        logger.info("Running ProGuard")
+        val proguardJar = Paths.get("proguard-7.7.0/lib/proguard.jar").toAbsolutePath()
+        if (!proguardJar.exists()) {
+            logger.error("ProGuard JAR not found at: {}", proguardJar)
+            return "ProGuard JAR not found at: $proguardJar"
         }
+        val proguardProcess = ProcessBuilder(
+            "java", "-jar", proguardJar.toString(), "@${configFile.toAbsolutePath()}"
+        ).redirectErrorStream(true).start()
+        val proguardOutput = BufferedReader(InputStreamReader(proguardProcess.inputStream)).readText()
+        proguardProcess.waitFor()
+        return if (proguardProcess.exitValue() != 0) {
+            logger.error("ProGuard processing failed: {}", proguardOutput)
+            "ProGuard processing failed: $proguardOutput"
+        } else {
+            logger.debug("ProGuard processing successful")
+            null
+        }
+    }
+
+    private fun listProcessedClassFiles(outputDir: java.nio.file.Path): List<java.nio.file.Path> {
+        logger.debug("Looking for processed class files in: {}", outputDir)
+        return Files.walk(outputDir)
+            .filter { it.toString().endsWith(".class") }
+            .toList()
+            .also {
+                if (it.isEmpty()) {
+                    logger.error("No processed class files found in output directory")
+                } else {
+                    logger.debug("Found {} processed class files", it.size)
+                }
+            }
+    }
+
+    private fun selectTargetClassFile(files: List<java.nio.file.Path>, actualClassName: String): java.nio.file.Path {
+        return if (files.size > 1) {
+            logger.debug(
+                "Multiple class files found, searching for the one matching class name: {}",
+                actualClassName
+            )
+            files.find {
+                it.fileName.toString().startsWith(actualClassName) ||
+                        it.fileName.toString().contains(actualClassName, ignoreCase = true)
+            } ?: files[0]
+        } else {
+            files[0]
+        }.also { logger.debug("Selected target class file: {}", it) }
+    }
+
+    private fun cleanupPathTree(path: java.nio.file.Path) {
+        Files.walk(path)
+            .sorted(Comparator.reverseOrder())
+            .forEach { Files.deleteIfExists(it) }
     }
 
     private fun decompileWithCFR(classFilePath: String): String {
@@ -363,9 +393,7 @@ object EquivalentMutationDetector {
         return result
     }
 
-    private fun buildClasspath(
-        projectConfig: ProjectConfig,
-    ): String {
+    private fun buildClasspath(projectConfig: ProjectConfig): String {
         val libFolder = "build/libs"
 
         val projectDependencies = projectConfig.buildTool.projectDependencies.map { "${projectConfig.sourceDir}/$it" }
