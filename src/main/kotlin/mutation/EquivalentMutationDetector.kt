@@ -68,15 +68,17 @@ object EquivalentMutationDetector {
         val transformedInitialCode =
             applyProGuardTransformations(projectConfig, codeFilePath, initialCode)
 
+        if (!transformedMutantCode.first || !transformedInitialCode.first) return false
+
         logger.debug("Checking equality between transformed codes")
-        return equalCodeCheck(transformedInitialCode, transformedMutantCode)
+        return equalCodeCheck(transformedInitialCode.second, transformedMutantCode.second)
     }
 
     private fun applyProGuardTransformations(
         projectConfig: ProjectConfig,
         codeFilePath: File,
         javaCode: String
-    ): String {
+    ): Pair<Boolean, String> {
         logger.debug("Starting ProGuard transformations on Java code")
 
         codeFilePath.writeText(javaCode)
@@ -90,32 +92,33 @@ object EquivalentMutationDetector {
         try {
             val packageName = extractPackageName(javaCode)
             val actualClassName = extractClassName(javaCode)
-                ?: return "Error: Could not extract class name from code"
+                ?: return Pair(false, "Error: Could not extract class name from code")
 
             val compileError = compileJava(projectConfig, codeFilePath, inputDir)
-            if (compileError != null) return compileError
+            if (compileError != null) return Pair(false, compileError)
 
             val configContent = buildProguardConfigContent(packageName, actualClassName, inputDir, outputDir)
             writeProguardConfig(configFile, configContent)
 
             val proguardError = runProguard(configFile)
-            if (proguardError != null) return proguardError
+            if (proguardError != null) return Pair(false, proguardError)
 
             val processedClassFiles = listProcessedClassFiles(outputDir)
-            if (processedClassFiles.isEmpty()) return "No processed class files found"
+            if (processedClassFiles.isEmpty()) return Pair(false, "No processed class files found")
 
             val targetClassFile = selectTargetClassFile(processedClassFiles, actualClassName)
 
             val decompiled = decompileWithCFR(targetClassFile.toString())
-            if (decompiled.startsWith("Error:") || decompiled.startsWith("CFR decompilation failed:")) {
+            return if (decompiled.startsWith("Error:") || decompiled.startsWith("CFR decompilation failed:")) {
                 logger.error("Decompilation failed: {}", decompiled)
+                Pair(false, decompiled)
             } else {
                 logger.debug("Decompilation successful, code length: {} characters", decompiled.length)
+                Pair(true, decompiled)
             }
-            return decompiled
         } catch (e: Exception) {
             logger.error("Error during ProGuard transformations", e)
-            return "Error: ${e.message}"
+            return Pair(false, "Error: ${e.message}")
         } finally {
             logger.debug("Cleaning up temporary directories and files")
             cleanupPathTree(inputDir)
