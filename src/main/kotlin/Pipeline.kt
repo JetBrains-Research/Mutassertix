@@ -1,6 +1,5 @@
 import ai.AssertionGenerationAgent
 import ai.ProjectBuildFixerAgent
-import ai.TestFixerAgent
 import ai.koog.prompt.executor.model.PromptExecutor
 import data.ProjectConfig
 import dataset.DatasetManager
@@ -50,7 +49,7 @@ object Pipeline {
                 if (processedMutations.contains(mutation)) continue
 
                 // Check if the mutation is equivalent to the current class
-                if (EquivalentMutationDetector.detect(executor, classFile, mutation)) {
+                if (EquivalentMutationDetector.detect(projectConfig, executor, classFile, mutation)) {
                     logger.info("Mutation {} is equivalent to the current class, skipping", mutation)
                     processedMutations.add(mutation)
                     continue
@@ -81,19 +80,8 @@ object Pipeline {
                 continue
             }
 
-            // Fix compilation errors
-            if (!fixCompilationErrors(datasetManager, projectConfig, executor, testFile, initialContent)) continue
-
-            // Run test fixer agent
-            if (!runTestFixerAgent(
-                    datasetManager,
-                    projectConfig,
-                    executor,
-                    testFile,
-                    targetTestName,
-                    initialContent
-                )
-            ) continue
+            // Fix project build errors
+            if (!fixProjectBuildErrors(datasetManager, projectConfig, executor, testFile, initialContent)) continue
 
             // Logs final test file content
             logger.debug("Final content:\n{}", testFile.readText())
@@ -149,7 +137,7 @@ object Pipeline {
     }
 
     /**
-     * Fixes compilation errors in the project.
+     * Fix project builds errors in the project.
      *
      * @param datasetManager The manager responsible for handling datasets and project configurations.
      * @param projectConfig The project configuration.
@@ -158,7 +146,7 @@ object Pipeline {
      * @param initialContent The initial content of the test file.
      * @return True if compilation errors were fixed or there were none, false otherwise.
      */
-    private suspend fun fixCompilationErrors(
+    private suspend fun fixProjectBuildErrors(
         datasetManager: DatasetManager,
         projectConfig: ProjectConfig,
         executor: PromptExecutor,
@@ -169,36 +157,6 @@ object Pipeline {
             datasetManager,
             projectConfig,
             testFile.path,
-        )
-        return processAgentResult(result, datasetManager, projectConfig, testFile, initialContent)
-    }
-
-    /**
-     * Executes the TestFixerAgent for a given test file, processes its result, and determines whether
-     * the operation was successful.
-     *
-     * @param datasetManager The manager responsible for handling datasets and project configurations.
-     * @param projectConfig The configuration details of the project being tested.
-     * @param executor The executor responsible for executing prompt-based operations.
-     * @param testFile The test file to be processed by the TestFixerAgent.
-     * @param className The name of the class associated with the test file.
-     * @param initialContent The initial content of the test file prior to processing.
-     * @return A Boolean value indicating whether the TestFixerAgent executed successfully.
-     */
-    private suspend fun runTestFixerAgent(
-        datasetManager: DatasetManager,
-        projectConfig: ProjectConfig,
-        executor: PromptExecutor,
-        testFile: File,
-        className: String,
-        initialContent: String
-    ): Boolean {
-        logger.info("Running test fixer agent")
-        val result = TestFixerAgent(executor).run(
-            datasetManager,
-            projectConfig,
-            testFile.path,
-            className,
         )
         return processAgentResult(result, datasetManager, projectConfig, testFile, initialContent)
     }
